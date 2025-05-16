@@ -74,7 +74,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         httpOnly: true,
         maxAge: age,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+        sameSite: "none",
       })
       .status(200)
       .json(userInfo);
