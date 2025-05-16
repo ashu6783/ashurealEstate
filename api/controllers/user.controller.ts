@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import User from "../models/User";
-import Post from "../models/Post";
-import SavedPost from "../models/SavedPost";
-import PostDetail from "../models/PostDetail";
+import User from "../models/user";
+import Post from "../models/post";
+import SavedPost from "../models/savedPost";
+import PostDetail from "../models/postDetail";
 
 interface CustomRequest extends Request {
   userId?: string;

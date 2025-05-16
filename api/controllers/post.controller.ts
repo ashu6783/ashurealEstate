@@ -1,12 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-import mongoose from "mongoose";
-import jwt from "jsonwebtoken";
-import Post from "../models/Post";
-import SavedPost from "../models/SavedPost";
-import PostDetail from "../models/PostDetail";
-import User from "../models/User";
+import Post from "../models/post";
+import SavedPost from "../models/savedPost";
+import PostDetail from "../models/postDetail";
+import User from "../models/user";
 
-// Define the AuthenticatedRequest interface once
 interface AuthenticatedRequest extends Request {
   userId?: string;
 }
