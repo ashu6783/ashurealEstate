@@ -87,8 +87,8 @@ function SearchBar() {
             className={`py-3 px-6 text-base font-medium capitalize rounded-xl transition duration-200 flex items-center
               ${
                 query.type === type
-                  ? "bg-blue-600 text-white shadow-md shadow-blue-200"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  ? "bg-[#B8860B] text-white shadow-md shadow-blue-200"
+                  : "bg-[#1b1919] text-white hover:bg-[#1b1919]"
               }
             `}
           >
@@ -107,7 +107,7 @@ function SearchBar() {
           transition={{ delay: 0.4 }}
         >
           <div className="flex-1 relative">
-            <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-500">
+            <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#B8860B]">
               <MapPin size={20} />
             </div>
             <input
@@ -152,7 +152,7 @@ function SearchBar() {
           {(expanded || window.innerWidth >= 768) && (
             <>
               <div className="flex-1 relative">
-                <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-500">
+                <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#B8860B]">
                   <DollarSign size={20} />
                 </div>
                 <input
@@ -167,7 +167,7 @@ function SearchBar() {
               </div>
               
               <div className="flex-1 relative">
-                <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-500">
+                <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#B8860B]">
                   <DollarSign size={20} />
                 </div>
                 <input
@@ -190,7 +190,7 @@ function SearchBar() {
                 onClick={() => setExpanded(!expanded)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="w-14 h-14 flex-none bg-gray-100 hover:bg-gray-200 rounded-xl flex justify-center items-center transition text-gray-700"
+                className="w-14 h-14 flex-none bg-[#B8860B] hover:bg-gray-200 rounded-xl flex justify-center items-center transition text-gray-700"
               >
                 {expanded ? <X size={20} /> : <ArrowRight size={20} />}
               </motion.button>
@@ -200,7 +200,7 @@ function SearchBar() {
               type="submit"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="w-14 h-14 flex-none bg-blue-600 hover:bg-blue-700 rounded-xl flex justify-center items-center transition shadow-lg shadow-blue-200"
+              className="w-14 h-14 flex-none bg-[#B8860B] hover:bg-[#B8860B] rounded-xl flex justify-center items-center transition shadow-lg shadow-blue-200"
             >
               <Search size={20} className="text-white" />
             </motion.button>

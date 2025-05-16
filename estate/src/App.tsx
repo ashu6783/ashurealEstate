@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   createBrowserRouter,
   RouterProvider,
@@ -18,66 +18,47 @@ import {
   profilePageLoader,
   singlePageLoader,
 } from "./lib/Loaders";
+import AboutPage from "./routes/about/AboutPage";
+import SplashScreen from "./components/SplashScreen"; // Add this line
 
 import "./index.css";
-import AboutPage from "./routes/about/AboutPage";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
     children: [
-      {
-        path: "/",
-        element: <HomePage />,
-      },
-      {
-        path: "/:id",
-        element: <SinglePage />,
-        loader: singlePageLoader,
-      },
-      {
-        path: "/list",
-        element: <ListPage />,
-        loader: listPageLoader,
-      },
-      {
-        path: "/register",
-        element: <Register />,
-      },
-      {
-        path: "/login",
-        element: <Login />,
-      },
+      { path: "/", element: <HomePage /> },
+      { path: "/:id", element: <SinglePage />, loader: singlePageLoader },
+      { path: "/list", element: <ListPage />, loader: listPageLoader },
+      { path: "/register", element: <Register /> },
+      { path: "/login", element: <Login /> },
     ],
   },
   {
     path: "/",
     element: <RequireAuth />,
     children: [
-      {
-        path: "/profile",
-        element: <ProfilePage />,
-        loader: profilePageLoader,
-      },
-      {
-        path: "/profile/update",
-        element: <ProfileUpdatePage />,
-      },
-      {
-        path: "/add",
-        element: <NewPostPage />,
-      },
-      {
-        path: "/about",
-        element: <AboutPage />,
-      },
+      { path: "/profile", element: <ProfilePage />, loader: profilePageLoader },
+      { path: "/profile/update", element: <ProfileUpdatePage /> },
+      { path: "/add", element: <NewPostPage /> },
+      { path: "/about", element: <AboutPage /> },
     ],
   },
 ]);
 
 const App: React.FC = () => {
-  return <RouterProvider router={router} />;
+  const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 3000); // Show splash screen for 3 seconds
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  return showSplash ? <SplashScreen /> : <RouterProvider router={router} />;
 };
 
 export default App;

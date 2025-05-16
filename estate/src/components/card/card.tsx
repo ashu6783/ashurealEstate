@@ -63,7 +63,7 @@ function Card({ item, className = "" }: CardProps) {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
-              className="absolute top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-medium"
+              className="absolute top-4 left-4 bg-[#B8860B] text-white px-3 py-1 rounded-full text-xs font-medium"
             >
               {item.type}
             </motion.div>
@@ -91,7 +91,7 @@ function Card({ item, className = "" }: CardProps) {
             <Link to={`/${item.id}`}>{item.title}</Link>
           </motion.h2>
           <p className="text-sm text-gray-600 flex items-center gap-1 mt-2">
-            <MapPin size={16} className="text-blue-500" />
+            <MapPin size={16} className="text-[#B8860B]" />
             <span className="truncate">{item.address}</span>
           </p>
         </div>
@@ -101,14 +101,14 @@ function Card({ item, className = "" }: CardProps) {
             className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg"
             whileHover={{ backgroundColor: "#f0f9ff" }}
           >
-            <Bed size={16} className="text-blue-500" />
+            <Bed size={16} className="text-[#B8860B]" />
             <span>{item.bedroom} {item.bedroom === 1 ? "bed" : "beds"}</span>
           </motion.div>
           <motion.div 
             className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg"
             whileHover={{ backgroundColor: "#f0f9ff" }}
           >
-            <Bath size={16} className="text-blue-500" />
+            <Bath size={16} className="text-[#B8860B]" />
             <span>{item.bathroom} {item.bathroom === 1 ? "bath" : "baths"}</span>
           </motion.div>
         </div>
@@ -120,7 +120,7 @@ function Card({ item, className = "" }: CardProps) {
           >
             <Link
               to={`/${item.id}`}
-              className="text-sm bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg inline-block"
+              className="text-sm bg-[#B8860B] text-white font-medium px-4 py-2 rounded-lg inline-block"
             >
               View details
             </Link>

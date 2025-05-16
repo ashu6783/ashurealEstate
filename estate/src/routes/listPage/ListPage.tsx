@@ -92,7 +92,7 @@ function ListPage() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="flex flex-col h-screen bg-gradient-to-br from-[#171b2c] to-[#4d4b1e]">
       <AnimatePresence>
         {isLoading && (
           <motion.div
@@ -110,7 +110,7 @@ function ListPage() {
               <motion.div
                 variants={loadingVariants}
                 animate="animate"
-                className="text-blue-600 mb-4"
+                className="text-amber-300 mb-4"
               >
                 <Loader size={40} />
               </motion.div>
@@ -146,15 +146,15 @@ function ListPage() {
               transition={{ delay: 0.4 }}
             >
               <div className="flex items-center">
-                <p className="text-gray-700">
-                  <span className="font-semibold text-gray-900">
+                <p className="text-white">
+                  <span className="font-semibold text-white">
                     {resultCount}
                   </span>{" "}
                   properties found
                   {searchParams.get("city") && (
                     <span>
                       {" in "}
-                      <span className="font-semibold text-blue-600">
+                      <span className="font-semibold text-[#B8860B]">
                         {searchParams.get("city")}
                       </span>
                     </span>
@@ -165,7 +165,7 @@ function ListPage() {
                 {isMobile && (
                   <motion.button
                     onClick={() => setShowMobileMap(true)}
-                    className="flex items-center gap-1 px-3 py-2 bg-blue-50 text-blue-600 rounded-lg text-sm font-medium"
+                    className="flex items-center gap-1 px-3 py-2 bg-blue-50 text-[#886B0B] rounded-lg text-sm font-medium"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -408,7 +408,7 @@ function ListPage() {
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                   >
-                    <Loader size={40} className="text-blue-500" />
+                    <Loader size={40} className="text-[#B8860B]" />
                   </motion.div>
                 </div>
               }

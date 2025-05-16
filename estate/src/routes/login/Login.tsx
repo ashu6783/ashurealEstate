@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
 import apiRequest from "../../lib/ApiRequest";
 import { AuthContext } from "../../context/AuthContext";
+import { LockKeyhole, User } from "lucide-react";
 
 interface AuthContextType {
     updateUser: (userData: any) => void;
@@ -58,9 +59,7 @@ const Login: React.FC = () => {
                             <div className="relative">
                                 <label htmlFor="username" className="sr-only">Username</label>
                                 <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                                    </svg>
+                                    <User className="h-5 w-5" />    
                                 </span>
                                 <input
                                     id="username"
@@ -77,9 +76,7 @@ const Login: React.FC = () => {
                             <div className="relative">
                                 <label htmlFor="password" className="sr-only">Password</label>
                                 <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                                    </svg>
+                                    <LockKeyhole className="h-5 w-5" />
                                 </span>
                                 <input
                                     id="password"
@@ -133,7 +130,7 @@ const Login: React.FC = () => {
                 <div className="flex items-center justify-center w-full h-full">
                     <div className="text-center">
                         <img
-                            src="/logo.png"
+                            src="/logo.svg"
                             alt="Brand Logo"
                             className="mx-auto max-w-xs mb-8"
                         />

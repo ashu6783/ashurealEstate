@@ -91,7 +91,7 @@ function HomePage() {
   
   return (
     <motion.div 
-      className="min-h-screen bg-gradient-to-br from-white to-gray-50"
+      className="min-h-screen bg-gradient-to-br from-[#171b2c] to-[#4d4b1e]"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
@@ -108,22 +108,21 @@ function HomePage() {
             <div className="flex flex-col gap-8 md:pr-8">
               <motion.div className="space-y-4" variants={itemVariants}>
                 <motion.h1 
-                  className="text-5xl lg:text-7xl font-bold text-gray-800 leading-tight"
+                  className="text-5xl lg:text-7xl font-bold text-white leading-tight"
                   variants={itemVariants}
                 >
                   Find{" "}
                   <motion.span 
-                    className="text-blue-600"
+                    className="bg-gradient-to-r from-[#d4b838] via-[#FFD700] to-[#e0aa22] bg-clip-text text-transparent font-extrabold "
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ delay: 0.7, duration: 0.8 }}
                   >
                     Real Estate
                   </motion.span>{" "}
                   & Get Your Dream Place
                 </motion.h1>
                 <motion.p 
-                  className="text-lg md:text-xl text-gray-600 max-w-2xl"
+                  className="text-lg md:text-xl text-gray-300 max-w-2xl"
                   variants={itemVariants}
                 >
                   Welcome to AshuEstate and Co., where your dream home becomes a reality.
@@ -157,7 +156,7 @@ function HomePage() {
                   whileHover={{ y: -10, boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" }}
                 >
                   <motion.h1 
-                    className="text-4xl lg:text-5xl font-bold text-blue-600"
+                    className="text-4xl lg:text-5xl font-bold text-[#B8860B]"
                     initial={{ opacity: 0, scale: 0.5 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.5, delay: 0.2 }}
@@ -172,7 +171,7 @@ function HomePage() {
                   whileHover={{ y: -10, boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" }}
                 >
                   <motion.h1 
-                    className="text-4xl lg:text-5xl font-bold text-blue-600"
+                    className="text-4xl lg:text-5xl font-bold text-[#B8860B]"
                     initial={{ opacity: 0, scale: 0.5 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.5, delay: 0.4 }}
@@ -187,7 +186,7 @@ function HomePage() {
                   whileHover={{ y: -10, boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" }}
                 >
                   <motion.h1 
-                    className="text-4xl lg:text-5xl font-bold text-blue-600"
+                    className="text-4xl lg:text-5xl font-bold text-[#B8860B]"
                     initial={{ opacity: 0, scale: 0.5 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.5, delay: 0.6 }}
@@ -206,8 +205,8 @@ function HomePage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1.2, duration: 0.5 }}
                 >
-                  <p className="text-lg text-blue-800">
-                    Welcome back, <span className="font-bold">{currentUser.name}</span>! Continue your property search where you left off.
+                  <p className="text-lg text-[#292009]">
+                    Welcome back, <span className="font-bold text-[#B8860B]">{currentUser.username}</span>! Continue your property search where you left off.
                   </p>
                 </motion.div>
               )}
@@ -234,48 +233,6 @@ function HomePage() {
                   className="w-full h-full object-cover" 
                 />
               </motion.div>
-              <div className="grid grid-cols-2 gap-6">
-                <motion.div 
-                  className="overflow-hidden rounded-2xl shadow-xl bg-blue-600 flex items-center justify-center p-6"
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.8, duration: 0.6 }}
-                  whileHover={{ scale: 1.03 }}
-                >
-                  <div className="text-center text-white">
-                    <h3 className="text-2xl font-bold mb-2">Ready to explore?</h3>
-                    <p className="mb-4">Discover our premium listings</p>
-                    <motion.button 
-                      className="px-6 py-2 bg-white text-blue-600 rounded-lg font-medium hover:bg-blue-50 transition-colors"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      Browse Now
-                    </motion.button>
-                  </div>
-                </motion.div>
-                
-                {/* Added new card for balance */}
-                <motion.div 
-                  className="overflow-hidden rounded-2xl shadow-xl bg-gray-800 flex items-center justify-center p-6"
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1, duration: 0.6 }}
-                  whileHover={{ scale: 1.03 }}
-                >
-                  <div className="text-center text-white">
-                    <h3 className="text-2xl font-bold mb-2">Need help?</h3>
-                    <p className="mb-4">Talk to our experts</p>
-                    <motion.button 
-                      className="px-6 py-2 bg-white text-gray-800 rounded-lg font-medium hover:bg-gray-100 transition-colors"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      Contact Us
-                    </motion.button>
-                  </div>
-                </motion.div>
-              </div>
             </div>
           </motion.div>
         </div>
@@ -323,10 +280,10 @@ function HomePage() {
                   <h3 className="text-xl font-bold text-gray-800"> {property.title}</h3>
                   <p className="text-gray-600 mt-2">{property.description}</p>
                   <div className="flex justify-between items-center mt-4">
-                    <span className="text-blue-600 font-semibold text-lg">{property.price}</span>
+                    <span className="text-[#B8860B] font-semibold text-lg">{property.price}</span>
                     <motion.button 
-                      className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium"
-                      whileHover={{ scale: 1.05, backgroundColor: "#2563EB" }}
+                      className="px-4 py-2 bg-[#B8860B] text-white rounded-lg text-sm font-medium"
+                      whileHover={{ scale: 1.05, backgroundColor: "#B8860B" }}
                       whileTap={{ scale: 0.95 }}
                     >
                       View Details
@@ -345,8 +302,8 @@ function HomePage() {
             transition={{ delay: 0.8, duration: 0.6 }}
           >
             <motion.button 
-              className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium text-lg"
-              whileHover={{ scale: 1.05, backgroundColor: "#2563EB" }}
+              className="px-8 py-3 bg-[#B8860B] text-white rounded-lg font-medium text-lg"
+              whileHover={{ scale: 1.05, backgroundColor: "#c7a03c" }}
               whileTap={{ scale: 0.95 }}
             >
               View All Properties

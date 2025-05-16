@@ -18,7 +18,7 @@ function Navbar() {
 
     return (
         <motion.nav 
-            className="flex justify-between items-center h-16 md:h-20 lg:h-24 px-4 md:px-8 relative bg-white shadow-sm"
+            className="flex justify-between items-center h-16 md:h-20 lg:h-24 px-4 md:px-8 relative bg-gradient-to-br from-[#0d1122] to-[#4d4b1e] shadow-sm"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -30,19 +30,20 @@ function Navbar() {
             >
                 <Link to="/" className="flex items-center font-bold text-xl">
                     <motion.img 
-                        src="./logo.png" 
+                        src="./logo.svg" 
                         alt="Logo" 
-                        className="w-8 md:w-10" 
+                        className="w-8 md:w-10 outline-none border-none" 
                         whileHover={{ rotate: 10 }}
                         transition={{ duration: 0.2 }}
+                        
                     />
                     <motion.span 
-                        className="hidden md:block ml-3 text-gray-800"
+                        className="hidden md:block ml-3 text-white"
                         initial={{ opacity: 0, x: -5 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.2 }}
                     >
-                        AshuEstate
+                        CrestKeys
                     </motion.span>
                 </Link>
             </motion.div>
@@ -52,7 +53,7 @@ function Navbar() {
                 {navItems.map((item, index) => (
                     <motion.div
                         key={item.label}
-                        className="relative text-gray-700 font-medium"
+                        className="relative text-white font-medium"
                         whileHover={{ scale: 1.1 }}
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -82,12 +83,12 @@ function Navbar() {
                         <motion.img
                             src={currentUser.avatar || "./avatar.svg"}
                             alt="avatar"
-                            className="w-8 h-8 md:w-10 md:h-10 rounded-full mr-2 md:mr-4 border-2 border-[#fece51]"
+                            className="w-8 h-8 md:w-10 md:h-10 rounded-full mr-2 md:mr-4 border-2 border-black"
                             whileHover={{ scale: 1.1 }}
                         />
-                        <span className="hidden md:block mr-3 text-gray-800">{currentUser.username}</span>
+                        <span className="hidden md:block mr-3 text-white">{currentUser.username}</span>
                         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                            <Link to="/profile" className="relative px-4 py-2 bg-[#fece51] rounded-lg font-medium cursor-pointer shadow-md">
+                            <Link to="/profile" className="relative px-4 py-2 bg-[#e1eef6] rounded-lg font-medium cursor-pointer shadow-md">
                                 {number > 0 && (
                                     <motion.div 
                                         className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 md:w-6 md:h-6 flex items-center justify-center text-xs"
@@ -111,7 +112,7 @@ function Navbar() {
                     >
                         <Link 
                             to="/login" 
-                            className="text-gray-700 font-medium"
+                            className="text-white font-medium"
                         >
                             <motion.span
                                 whileHover={{ scale: 1.05, color: "#fece51" }}
@@ -122,7 +123,7 @@ function Navbar() {
                         </Link>
                         <Link to="/register">
                             <motion.div
-                                className="bg-[#fece51] px-5 py-2 rounded-lg font-medium shadow-md"
+                                className="bg-[#f7f338] px-5 py-2 rounded-lg font-medium shadow-md"
                                 whileHover={{ scale: 1.05, backgroundColor: "#ffd875" }}
                                 whileTap={{ scale: 0.95 }}
                                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
