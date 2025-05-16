@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/user";
-import { JwtPayload } from "../types";
 
 // Helper to log errors cleanly
 const logError = (label: string, req: Request, err: unknown) => {
