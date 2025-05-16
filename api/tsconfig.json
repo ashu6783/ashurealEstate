@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "typeRoots": ["./node_modules/@types", "./types"],
+    "rootDir": "./",         // This indicates the root directory where your .ts files are located
+    "resolveJsonModule": true
+  },
+  "include": ["*.ts"],       // This includes all TypeScript files in the root directory
+  "exclude": ["node_modules"]
+}
