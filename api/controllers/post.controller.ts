@@ -36,10 +36,7 @@ export const getPosts = async (
         $lte: maxPrice ? Number(maxPrice) : 100000000,
       };
     }
-
-    console.log("Fetching posts with filters:", filters);
     const posts = await Post.find(filters).exec();
-    console.log("Found posts:", posts);
 
     res.status(200).json(posts);
   } catch (error: any) {
@@ -75,15 +72,13 @@ export const getPost = async (
 
     // Manually fetch the associated PostDetail
     const postDetail = await PostDetail.findOne({ postId: post._id });
-    console.log("Found post detail:", postDetail);
+
 
     // Combine the post and postDetail into the response
     const postWithDetails = {
       ...post.toObject(),
       postDetail: postDetail || null, // Include postDetail, or null if not found
     };
-
-    console.log("Returning post with details:", postWithDetails);
     res.status(200).json(postWithDetails);
   } catch (error: any) {
     console.error("Error in getPost:", error.message, error.stack);
@@ -113,7 +108,6 @@ export const addPost = async (
     }
 
     const user = await User.findById(userId);
-    console.log("Found user:", user);
 
     if (!user) {
       res.status(404).json({ message: "User not found" });
@@ -121,9 +115,6 @@ export const addPost = async (
     }
 
     const { postData, postDetail } = req.body;
-    console.log("Received payload:", req.body);
-
-    // Validate required fields
     if (
       !postData ||
       !postData.title ||
@@ -156,9 +147,7 @@ export const addPost = async (
       userId,
     });
 
-    console.log("Saving new post:", newPost);
     const savedPost = await newPost.save();
-    console.log("Saved post:", savedPost);
 
     // Create new PostDetail
     const newPostDetail = new PostDetail({
@@ -166,9 +155,9 @@ export const addPost = async (
       postId: savedPost._id,
     });
 
-    console.log("Saving new post detail:", newPostDetail);
+
     const savedPostDetail = await newPostDetail.save();
-    console.log("Saved post detail:", savedPostDetail);
+
 
     res.status(201).json(savedPost);
   } catch (error: any) {
@@ -187,8 +176,6 @@ export const updatePost = async (
     const postId = req.params.id;
     const tokenUserId = req.userId;
 
-    console.log("Updating post with ID:", postId);
-    console.log("User ID from token:", tokenUserId);
 
     if (!tokenUserId) {
       res.status(401).json({ message: "Unauthorized: User ID not found" });
@@ -214,7 +201,7 @@ export const updatePost = async (
     }
 
     const { postData, postDetail } = req.body;
-    console.log("Update payload:", req.body);
+  
 
     // Update Post
     if (postData) {
@@ -231,7 +218,7 @@ export const updatePost = async (
       if (existingPostDetail) {
         Object.assign(existingPostDetail, postDetail);
         await existingPostDetail.save();
-        console.log("Updated post detail:", existingPostDetail);
+  
       } else {
         // If PostDetail doesn't exist, create a new one
         const newPostDetail = new PostDetail({
@@ -239,7 +226,7 @@ export const updatePost = async (
           postId: post._id,
         });
         await newPostDetail.save();
-        console.log("Created new post detail:", newPostDetail);
+      
       }
     }
 
@@ -251,10 +238,10 @@ export const updatePost = async (
       postDetail: updatedPostDetail || null,
     };
 
-    console.log("Returning updated post with details:", postWithDetails);
+
     res.status(200).json(postWithDetails);
   } catch (error: any) {
-    console.error("Error in updatePost:", error.message, error.stack);
+
     res.status(500).json({ message: "Failed to update post", error: error.message });
   }
 };
@@ -269,8 +256,6 @@ export const deletePost = async (
     const postId = req.params.id;
     const tokenUserId = req.userId;
 
-    console.log("Deleting post with ID:", postId);
-    console.log("User ID from token:", tokenUserId);
 
     if (!tokenUserId) {
       res.status(401).json({ message: "Unauthorized: User ID not found" });

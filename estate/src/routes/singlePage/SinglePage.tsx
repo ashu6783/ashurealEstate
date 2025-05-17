@@ -5,7 +5,7 @@ import apiRequest from "../../lib/ApiRequest";
 import { AuthContext } from "../../context/AuthContext";
 import Slider from "../../components/slider/Slider";
 import Map from "../../components/map/Map";
-import { AreaChart, Bath, BedSingleIcon, Coins, Contact, CookingPot, Dog, MapPinCheck, Power, Save, School } from "lucide-react";
+import { AreaChart, Bath, BedSingleIcon, Bus, Coins, Contact, CookingPot, Dog, MapPinCheck, Power, Save, School } from "lucide-react";
 
 const SinglePage = () => {
   const post = useLoaderData();
@@ -52,7 +52,7 @@ const SinglePage = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#B8860B]"></div>
       </div>
     );
   }
@@ -65,7 +65,7 @@ const SinglePage = () => {
         </div>
         <Link
           to="/"
-          className="bg-teal-500 text-white px-6 py-2 rounded-lg hover:bg-teal-600 transition-colors"
+          className="bg-[#B8860B] text-white px-6 py-2 rounded-lg hover:bg-teal-600 transition-colors"
         >
           Return to Home
         </Link>
@@ -87,10 +87,10 @@ const SinglePage = () => {
                   {post.title || "Untitled Property"}
                 </h1>
                 <div className="flex items-center gap-2 text-gray-600">
-                  <MapPinCheck className="h-5 w-5 text-teal-500" />
+                  <MapPinCheck className="h-5 w-5 text-[#B8860B]" />
                   <span className="text-sm md:text-base">{post.address || "Address not provided"}</span>
                 </div>
-                <div className="bg-teal-500 text-white rounded-md px-4 py-2 text-lg font-medium w-fit">
+                <div className="bg-[#B8860B] text-white rounded-md px-4 py-2 text-lg font-medium w-fit">
                   ${post.price?.toLocaleString() || "Price not available"}
                 </div>
               </div>
@@ -101,13 +101,13 @@ const SinglePage = () => {
                     alt="Owner"
                     className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-md"
                   />
-                  <div className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
+               
                 </div>
                 <span className="font-medium text-gray-800">{post.userId?.username || "Property Owner"}</span>
                 <span className="text-xs text-gray-500 mb-2">Property Owner</span>
                 <button
                   onClick={handleSendMessage}
-                  className="text-sm bg-white text-teal-600 hover:bg-teal-50 border border-teal-300 rounded-full px-3 py-1 transition-colors flex items-center gap-1"
+                  className="text-sm bg-white text-[#B8860B] hover:bg-teal-50 border border-teal-300 rounded-full px-3 py-1 transition-colors flex items-center gap-1"
                 >
                   <Contact className="h-5 w-5" />
                   Contact
@@ -131,7 +131,7 @@ const SinglePage = () => {
           <div className="flex justify-between gap-4 mb-8">
             <button
               onClick={handleSendMessage}
-              className="flex-1 flex items-center justify-center gap-2 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors shadow-md"
+              className="flex-1 flex items-center justify-center gap-2 py-3 bg-[#B8860B] text-white rounded-lg shadow-md"
             >
               <Contact className="h-5 w-5" />
               Contact Owner
@@ -147,22 +147,22 @@ const SinglePage = () => {
           </div>
           <div className="grid grid-cols-3 gap-4 mb-8">
             <div className="bg-white p-4 rounded-lg shadow-sm flex flex-col items-center">
-              <div className="text-teal-600 mb-1">
-                <AreaChart className="h-6 w-6 text-teal-600" />
+              <div className="text-[#B8860B] mb-1">
+                <AreaChart className="h-6 w-6 text-[#B8860B]" />
               </div>
               <span className="text-xs text-gray-500">Size</span>
               <span className="font-medium">{post.postDetail?.size || "N/A"} sqft</span>
             </div>
             <div className="bg-white p-4 rounded-lg shadow-sm flex flex-col items-center">
               <div className="text-teal-600 mb-1">
-                <BedSingleIcon className="h-6 w-6 text-teal-600" />
+                <BedSingleIcon className="h-6 w-6 text-[#B8860B]" />
               </div>
               <span className="text-xs text-gray-500">Bedrooms</span>
               <span className="font-medium">{post.bedroom || "N/A"}</span>
             </div>
             <div className="bg-white p-4 rounded-lg shadow-sm flex flex-col items-center">
               <div className="text-teal-600 mb-1">
-                <Bath className="h-6 w-6 text-teal-600" />
+                <Bath className="h-6 w-6 text-[#B8860B]" />
               </div>
               <span className="text-xs text-gray-500">Bathrooms</span>
               <span className="font-medium">{post.bathroom || "N/A"}</span>
@@ -172,8 +172,8 @@ const SinglePage = () => {
             <h2 className="text-lg font-semibold text-gray-800 mb-4">Property Features</h2>
             <div className="space-y-6">
               <div className="flex items-start gap-3">
-                <div className="bg-teal-100 p-2 rounded-lg">
-                  <Power className="h-5 w-5 text-teal-600" />
+                <div className="bg-yellow-100 p-2 rounded-lg">
+                  <Power className="h-5 w-5 text-[#B8860B]" />
                 </div>
                 <div>
                   <h3 className="text-sm font-semibold text-gray-700">Utilities</h3>
@@ -189,8 +189,8 @@ const SinglePage = () => {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <div className="bg-teal-100 p-2 rounded-lg">
-                  <Dog className="h-5 w-5 text-teal-600" />
+                <div className="bg-yellow-100 p-2 rounded-lg">
+                  <Dog className="h-5 w-5 text-[#B8860B]" />
                 </div>
                 <div>
                   <h3 className="text-sm font-semibold text-gray-700">Pet Policy</h3>
@@ -204,8 +204,8 @@ const SinglePage = () => {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <div className="bg-teal-100 p-2 rounded-lg">
-                  <Coins className="h-5 w-5 text-teal-600" />
+                <div className="bg-yellow-100 p-2 rounded-lg">
+                  <Coins className="h-5 w-5 text-[#B8860B]" />
                 </div>
                 <div>
                   <h3 className="text-sm font-semibold text-gray-700">Income Requirement</h3>
@@ -215,59 +215,44 @@ const SinglePage = () => {
             </div>
           </div>
           <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Nearby Places</h2>
+            <h2 className="text-lg font-semibold text-[#36454F] mb-4">Nearby Places</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-blue-50 p-4 rounded-lg flex flex-col items-center">
-                <div className="bg-blue-100 p-2 rounded-full mb-2">
-                  <School className="h-6 w-6 text-blue-600" />
+              <div className="bg-yellow-50 p-4 rounded-lg flex flex-col items-center">
+                <div className="bg-gray-100 p-2 rounded-full mb-2">
+                  <School className="h-6 w-6 text-[#36454F]" />
                 </div>
-                <h3 className="text-sm font-semibold text-blue-800">School</h3>
-                <p className="text-sm text-blue-600 text-center">
-                  {post.postDetail?.school
-                    ? post.postDetail.school > 999
-                      ? (post.postDetail.school / 1000).toFixed(1) + " km"
-                      : post.postDetail.school + " m"
-                    : "N/A"}
+                <h3 className="text-sm font-semibold text-[#151b1f]">School</h3>
+                <p className="text-sm text-[#36454F] text-center">
+                  {post.postDetail.school
+                  
+                   +" km" || "N/A"}
                 </p>
               </div>
-              <div className="bg-blue-50 p-4 rounded-lg flex flex-col items-center">
-                <div className="bg-blue-100 p-2 rounded-full mb-2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 text-blue-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+              <div className="bg-yellow-50 p-4 rounded-lg flex flex-col items-center">
+                <div className="bg-gray-100 p-2 rounded-full mb-2">
+                 <Bus className="h-5 w-5 text-[#36454F]" />
                 </div>
-                <h3 className="text-sm font-semibold text-blue-800">Bus Stop</h3>
-                <p className="text-sm text-blue-600 text-center">
+                <h3 className="text-sm font-semibold text-[#151b1f]">Bus Stop</h3>
+                <p className="text-sm text-[#36454F] text-center">
                   {post.postDetail?.bus
-                    ? post.postDetail.bus > 999
-                      ? (post.postDetail.bus / 1000).toFixed(1) + " km"
-                      : post.postDetail.bus + " m"
-                    : "N/A"}
+                    +" km" || "N/A"}
                 </p>
               </div>
-              <div className="bg-blue-50 p-4 rounded-lg flex flex-col items-center">
-                <div className="bg-blue-100 p-2 rounded-full mb-2">
-                  <CookingPot className="h-5 w-5 text-blue-600" />
+              <div className="bg-yellow-50 p-4 rounded-lg flex flex-col items-center">
+                <div className="bg-gray-100 p-2 rounded-full mb-2">
+                  <CookingPot className="h-5 w-5 text-[#36454F]" />
                 </div>
-                <h3 className="text-sm font-semibold text-blue-800">Restaurant</h3>
-                <p className="text-sm text-blue-600 text-center">
+                <h3 className="text-sm font-semibold text-[#151b1f]">Restaurant</h3>
+                <p className="text-sm text-[#36454F] text-center">
                   {post.postDetail?.restaurant
-                    ? post.postDetail.restaurant > 999
-                      ? (post.postDetail.restaurant / 1000).toFixed(1) + " km"
-                      : post.postDetail.restaurant + " m"
-                    : "N/A"}
+                    
+                   +" km" || "N/A"}
                 </p>
               </div>
             </div>
           </div>
           <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Location</h2>
+            <h2 className="text-lg font-semibold text-[#151b1f] mb-4">Location</h2>
             <div className="w-full h-64 rounded-lg overflow-hidden">
               {post.latitude && post.longitude ? (
                 <Map

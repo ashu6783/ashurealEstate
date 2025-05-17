@@ -19,7 +19,7 @@ apiRequest.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      console.warn("🔒 Unauthorized (401) - Check session or credentials");
+      console.warn("Unauthorized (401) - Check session or credentials");
     }
     return Promise.reject(error);
   }

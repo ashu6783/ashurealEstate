@@ -14,10 +14,7 @@ const logError = (label: string, req: Request, err: unknown) => {
 };
 
 export const register = async (req: Request, res: Response): Promise<void> => {
-  console.log(`[${new Date().toISOString()}] POST ${req.path} - Incoming body:`, req.body);
-
   const { username, email, password } = req.body;
-
   try {
     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
     if (existingUser) {
