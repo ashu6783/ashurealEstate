@@ -37,9 +37,9 @@ const Register = () => {
     <div className="flex min-h-screen bg-gradient-to-br from-teal-50 to-blue-50">
       {/* Left side - Image */}
       <div className="hidden lg:flex lg:w-1/2 items-center justify-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-teal-500/90 to-blue-600/90 z-10"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-[#bcbeca] to-[#36351c] z-10"></div>
         <div className="relative z-20 p-12 max-w-lg text-white">
-          <h2 className="text-4xl font-bold mb-6">Welcome to AshuEstate & Co.</h2>
+          <h2 className="text-4xl font-bold mb-6">Welcome to Crestkeys</h2>
           <p className="text-xl mb-8 text-white/90">
             Sign up to explore premium properties, expert insights, and personalized real estate solutions.
           </p>
