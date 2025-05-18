@@ -150,45 +150,53 @@ CrestKeys is a comprehensive real estate platform that connects property buyers,
 
 
 
-### Prerequisites
+## 🔒 Authentication Flow
 
-- Node.js (v14+)
-- npm or yarn
-- MongoDB instance (local or cloud)
-- Cloudinary account for image uploads
+1. **Registration**:
+   * User submits registration form with email, username, password
+   * Backend validates the data and creates a new user account
+   * JWT token is generated and returned to the client
 
-### Installation
+2. **Login**:
+   * User submits login credentials
+   * Backend validates credentials and issues a JWT token
+   * Token is stored in the client using Context API
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/crestkeys.git
-   cd crestkeys
-2. Install dependencies for both client and server:
-   ```bash
-   cd client
-   npm install
-   cd ../server
-   npm install
-3. Setup environment variables:
-   ```bash
-   MONGODB_URI=your_mongodb_connection_string
-   JWT_SECRET=your_jwt_secret_key
-   CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
-   CLOUDINARY_API_KEY=your_cloudinary_api_key
-   CLOUDINARY_API_SECRET=your_cloudinary_api_secret
-   
-## Usage
-  - Visit the frontend URL (usually http://localhost:3000).
-  - Register or log in to create property listings.
-  - Browse properties by filtering for Buy, Rent, or Vacation.
-  - Save posts you like for easy access later.
-  - Public users can send enquiries for any listing.
+3. **Protected Routes**:
+   * JWT token is sent with each request to protected endpoints
+   * Backend middleware verifies the token before processing requests
+   * Unauthorized requests are rejected with appropriate error messages
 
-## Authentication Flow
-  - User signs up or logs in.
-  - JWT token is issued and stored in the client (using Context API to manage auth state).
-  - Authenticated routes allow creating and managing posts.
-  - Public routes enable browsing and enquiring.
+## 📷 Image Upload
+
+CrestKeys uses Cloudinary for image management:
+
+1. User selects images for upload
+2. Images are sent directly to Cloudinary via the frontend
+3. Cloudinary returns image URLs after processing
+4. URLs are saved in the database as part of the property listing
+
+## 🌐 API Endpoints
+
+### Authentication
+* `POST /api/auth/register` - Register a new user
+* `POST /api/auth/login` - Log in an existing user
+
+### Users
+* `GET /api/users/profile` - Get user profile
+* `PUT /api/users/profile` - Update user profile
+* `GET /api/users/saved` - Get user's saved properties
+
+### Properties
+* `GET /api/posts` - Get all properties (with filters)
+* `GET /api/posts/:id` - Get property details
+* `POST /api/posts` - Create new property listing
+* `PUT /api/posts/:id` - Update property listing
+* `DELETE /api/posts/:id` - Delete property listing
+* `POST /api/posts/:id/inquire` - Send inquiry about a property
 
 
-  
+
+
+
+
