@@ -33,6 +33,7 @@ const router = createBrowserRouter([
       { path: "/list", element: <ListPage />, loader: listPageLoader },
       { path: "/register", element: <Register /> },
       { path: "/login", element: <Login /> },
+      { path: "/about", element: <AboutPage /> },
     ],
   },
   {
@@ -42,7 +43,6 @@ const router = createBrowserRouter([
       { path: "/profile", element: <ProfilePage />, loader: profilePageLoader },
       { path: "/profile/update", element: <ProfileUpdatePage /> },
       { path: "/add", element: <NewPostPage /> },
-      { path: "/about", element: <AboutPage /> },
     ],
   },
 ]);
