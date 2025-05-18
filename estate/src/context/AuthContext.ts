@@ -14,10 +14,12 @@ export interface AuthContextType {
   currentUser: User | null;
   updateUser: (user: User | null) => void;
   logoutUser: () => void;
+  loading: boolean;
 }
 
 export const AuthContext = createContext<AuthContextType>({
   currentUser: null,
   updateUser: () => {},
   logoutUser: () => {},
+  loading: false,
 });
