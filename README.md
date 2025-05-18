@@ -1,30 +1,65 @@
-# CrestKeys
+# CrestKeys 🏡
 
-CrestKeys is a real estate platform where users can buy, rent, or list vacation properties. It allows registered users to create posts to sell, rent, or offer stays, while public users can browse listings, save favorites, and make inquiries.
+<div align="center">
+  
+![CrestKeys Logo](https://via.placeholder.com/150x150)
 
----
+**Your Ultimate Real Estate Platform**
 
-## Features
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Node.js](https://img.shields.io/badge/Node.js-v14+-green.svg)](https://nodejs.org/)
+[![React](https://img.shields.io/badge/React-v18-blue.svg)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-v4-blue.svg)](https://www.typescriptlang.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-v5-green.svg)](https://www.mongodb.com/)
 
-- **User Authentication:** Register and log in using JWT-based authentication.
-- **Post Creation:** Authenticated users can create property listings for sale, rent, or vacation stays.
-- **Image Upload:** Upload property images via Cloudinary for easy and secure storage.
-- **Filtering:** Filter property listings by Buy, Rent, or Vacation categories.
-- **Save Posts:** Users can save posts for future reference.
-- **Enquiries:** Public users can view posts and send enquiries about properties.
-- **Context-based AuthProvider:** React context is used to manage user authentication state.
+</div>
 
----
+## 📋 Overview
 
-## Technologies Used
+CrestKeys is a comprehensive real estate platform that connects property buyers, renters, and vacation seekers with available listings. The platform offers a seamless experience for users to browse, create, and manage property listings with an intuitive interface.
 
-- Frontend: React, TypeScript
-- Backend: Node.js, Express.js
-- Database: MongoDB
-- Authentication: JWT (JSON Web Tokens)
-- Image Upload & Storage: Cloudinary
+### Who is it for?
 
----
+- **Property Owners**: List your properties for sale, rent, or as vacation stays
+- **Home Buyers**: Find your dream home with detailed listings and photos
+- **Renters**: Discover rental properties that match your preferences
+- **Vacationers**: Book the perfect vacation spot for your next getaway
+
+## ✨ Features
+
+### For All Users
+- **Property Search**: Browse comprehensive property listings with detailed information
+- **Advanced Filtering**: Find properties by category (Buy, Rent, Vacation), location, price range, and amenities
+- **Favorites**: Save properties to revisit later
+- **Enquiries**: Contact property owners directly through the platform
+- **Interactive Maps**: Visualize property locations and explore neighborhoods
+
+### For Registered Users
+- **User Profiles**: Manage your personal information and preferences
+- **Property Listings**: Create and manage your own property listings
+- **Image Management**: Upload multiple high-quality photos via Cloudinary integration
+- **Dashboard**: Track your property listings, saved favorites, and enquiries
+- **Notifications**: Receive updates on your listings and enquiries
+
+## 🛠️ Technology Stack
+
+### Frontend
+- **React**: Component-based UI library for building the user interface
+- **TypeScript**: For type-safe code development
+- **Vite**: Next-generation frontend tooling
+- **Context API**: For state management across the application
+- **Axios**: For API requests to the backend
+
+### Backend
+- **Node.js**: JavaScript runtime environment
+- **Express.js**: Web application framework for Node.js
+- **MongoDB**: NoSQL database for storing application data
+- **Mongoose**: MongoDB object modeling for Node.js
+- **JWT**: JSON Web Tokens for secure authentication
+
+### Cloud Services
+- **Cloudinary**: Cloud-based image and video management service
+- **Vercel**: Deployment and hosting platform
 
 ## Getting Started
 
