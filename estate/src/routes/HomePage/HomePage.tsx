@@ -123,7 +123,7 @@ function HomePage() {
             <div className="grid grid-cols-1 gap-6 h-full">
               <div className="overflow-hidden rounded-2xl shadow-xl transition-transform duration-300 hover:scale-[1.02]">
                 <img 
-                  src="/bgg.png" 
+                  src="/bgg.webp" 
                   alt="Luxury Home" 
                   className="w-full h-full object-cover" 
                 />
