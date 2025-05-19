@@ -1,11 +1,28 @@
-import { useContext } from 'react';
-import { motion } from 'framer-motion';
-import SearchBar from '../../components/searchbar/SearchBar';
+import { useContext, lazy, Suspense } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 
+// Import the new component files
+import FeaturedProperties from '../../components/card/featuredProperties';
+import CTASection from '../../components/card/CTA';
+
+// Lazy load components that aren't needed for initial render
+const SearchBar = lazy(() => import('../../components/searchbar/SearchBar'));
+
+// Preload main background image
+const preloadMainImage = () => {
+  const link = document.createElement('link');
+  link.rel = 'preload';
+  link.as = 'image';
+  link.href = '/bgg.webp';
+  document.head.appendChild(link);
+};
+
 function HomePage() {
+  // Preload the image as soon as component mounts
+  preloadMainImage();
   const { currentUser } = useContext(AuthContext);
 
+  // Move this out of the render function to prevent re-creation on each render
   const featuredProperties = [
     {
       id: 1,
@@ -32,30 +49,16 @@ function HomePage() {
       alt: "Mountain House",
     },
   ];
-  
-  // Simplified animation variants
-  const fadeIn = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { duration: 0.5 }
-    }
-  };
-  
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#171b2c] to-[#4d4b1e]">
       <div className="container mx-auto px-4 py-12">
         <div className="flex flex-col md:flex-row gap-8 lg:gap-16">
-          {/* Left Content Section */}
-          <motion.div 
-            className="flex-1 md:flex-[3]"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
+          {/* Left Content Section - Critical LCP path */}
+          <div className="flex-1 md:flex-[3]">
             <div className="flex flex-col gap-8 md:pr-8">
               <div className="space-y-4">
+                {/* This is your LCP element - prioritize it */}
                 <h1 className="text-5xl lg:text-7xl font-bold text-white leading-tight">
                   Find{" "}
                   <span className="bg-gradient-to-r from-[#d4b838] via-[#FFD700] to-[#e0aa22] bg-clip-text text-transparent font-extrabold">
@@ -69,145 +72,66 @@ function HomePage() {
                   tailored to your unique needs and lifestyle.
                 </p>
               </div>
-              
-              {/* Search Bar */}
+
+              {/* Lazy load SearchBar component */}
               <div className="py-6">
-                <SearchBar />
+                <Suspense fallback={<div className="h-14 bg-gray-100 animate-pulse rounded-lg"></div>}>
+                  <SearchBar />
+                </Suspense>
               </div>
-              
-              {/* Stats Section with Simpler Animation */}
-              <motion.div 
-                className="hidden sm:grid grid-cols-3 gap-6 mt-8 py-8 border-t border-gray-200"
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-50px" }}
-                variants={fadeIn}
-              >
-                <div className="text-center p-4 bg-white bg-opacity-50 hover:bg-white rounded-xl transition-all duration-300">
-                  <h1 className="text-4xl lg:text-5xl font-bold text-[#B8860B]">16+</h1>
-                  <h2 className="text-lg font-medium mt-2 text-gray-700">Years of Experience</h2>
+
+              {/* Stats Section with Static Rendering */}
+              <div className="hidden sm:grid grid-cols-3 gap-6 mt-8 py-8 border-t border-gray-200">
+                <div className="text-center p-4 bg-white bg-opacity-50 hover:bg-white rounded-xl transition-colors duration-300">
+                  <h2 className="text-4xl lg:text-5xl font-bold text-[#B8860B]">16+</h2>
+                  <p className="text-lg font-medium mt-2 text-gray-700">Years of Experience</p>
                 </div>
-                <div className="text-center p-4 bg-white bg-opacity-50 hover:bg-white rounded-xl transition-all duration-300">
-                  <h1 className="text-4xl lg:text-5xl font-bold text-[#B8860B]">200</h1>
-                  <h2 className="text-lg font-medium mt-2 text-gray-700">Awards Gained</h2>
+                <div className="text-center p-4 bg-white bg-opacity-50 hover:bg-white rounded-xl transition-colors duration-300">
+                  <h2 className="text-4xl lg:text-5xl font-bold text-[#B8860B]">200</h2>
+                  <p className="text-lg font-medium mt-2 text-gray-700">Awards Gained</p>
                 </div>
-                <div className="text-center p-4 bg-white bg-opacity-50 hover:bg-white rounded-xl transition-all duration-300">
-                  <h1 className="text-4xl lg:text-5xl font-bold text-[#B8860B]">2000+</h1>
-                  <h2 className="text-lg font-medium mt-2 text-gray-700">Properties Ready</h2>
+                <div className="text-center p-4 bg-white bg-opacity-50 hover:bg-white rounded-xl transition-colors duration-300">
+                  <h2 className="text-4xl lg:text-5xl font-bold text-[#B8860B]">2000+</h2>
+                  <p className="text-lg font-medium mt-2 text-gray-700">Properties Ready</p>
                 </div>
-              </motion.div>
-              
+              </div>
+
               {/* User Welcome Message if Logged In */}
               {currentUser && (
-                <motion.div 
-                  className="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-100"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5 }}
-                >
+                <div className="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-100">
                   <p className="text-lg text-[#292009]">
                     Welcome back, <span className="font-bold text-[#B8860B]">{currentUser.username}</span>! Continue your property search where you left off.
                   </p>
-                </motion.div>
+                </div>
               )}
             </div>
-          </motion.div>
-          
-          {/* Right Image Gallery Section */}
-          <motion.div 
-            className="hidden md:block flex-[2]"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
+          </div>
+
+          {/* Right Image Gallery Section - Optimize with explicit width/height */}
+          <div className="hidden md:block flex-[2]">
             <div className="grid grid-cols-1 gap-6 h-full">
-              <div className="overflow-hidden rounded-2xl shadow-xl transition-transform duration-300 hover:scale-[1.02]">
-                <img 
-                  src="/bgg.webp" 
-                  alt="Luxury Home" 
-                  className="w-full h-full object-cover" 
+              <div className="overflow-hidden rounded-2xl shadow-xl">
+                <img
+                  src="/bgg.webp"
+                  srcSet="/bgg-400.webp 400w, /bgg-800.webp 800w, /bgg.webp 1200w"
+                  sizes="(max-width: 600px) 400px, (max-width: 1200px) 800px, 1200px"
+                  alt="Luxury Home"
+                  className="w-full h-full object-cover"
+                  width="600"
+                  height="800"
+                  fetchPriority="high"
+                  decoding="async"
                 />
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
-        
-        {/* Featured Properties Section */}
-        <motion.div
-          className="mt-16 pt-8 border-t border-gray-200"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={fadeIn}
-        >
-          <h2 className="text-3xl font-bold text-gray-800 mb-8">
-            Featured Properties
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredProperties.map((property) => (
-              <div
-                key={property.id}
-                className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
-              >
-                <div className="h-48 overflow-hidden">
-                  <img 
-                    src={property.image} 
-                    alt={property.alt || "Property Image"}
-                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                  />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-800">{property.title}</h3>
-                  <p className="text-gray-600 mt-2">{property.description}</p>
-                  <div className="flex justify-between items-center mt-4">
-                    <span className="text-[#B8860B] font-semibold text-lg">{property.price}</span>
-                    <button 
-                      className="px-4 py-2 bg-[#B8860B] text-white rounded-lg text-sm font-medium hover:bg-[#c7a03c] transition-colors duration-300"
-                    >
-                      View Details
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          <div className="mt-10 text-center">
-            <button 
-              className="px-8 py-3 bg-[#B8860B] text-white rounded-lg font-medium text-lg hover:bg-[#c7a03c] transition-colors duration-300"
-            >
-              View All Properties
-            </button>
-          </div>
-        </motion.div>
-        
-        {/* Call to Action Section */}
-        <motion.div
-          className="mt-16 py-12 px-8 bg-gray-800 rounded-2xl text-white"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={fadeIn}
-        >
-          <div className="flex flex-col md:flex-row items-center justify-between">
-            <div>
-              <h2 className="text-3xl font-bold mb-4">
-                Ready to find your dream home?
-              </h2>
-              <p className="text-gray-300 max-w-xl">
-                Join thousands of satisfied customers who found their perfect property with AshuEstate and Co.
-              </p>
-            </div>
-            <div className="mt-6 md:mt-0">
-              <button 
-                className="px-8 py-3 bg-white text-gray-800 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors duration-300"
-              >
-                Get Started Today
-              </button>
-            </div>
-          </div>
-        </motion.div>
+
+        {/* Use the separated FeaturedProperties component */}
+        <FeaturedProperties properties={featuredProperties} />
+
+        {/* Use the separated CTASection component */}
+        <CTASection />
       </div>
       <footer className="mt-16 py-8 bg-gray-900 text-white text-center">
         <p className="text-sm">

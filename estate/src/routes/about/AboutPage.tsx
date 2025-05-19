@@ -46,7 +46,7 @@ const AboutPage = () => {
         {
             name: "Alex Rivera",
             location: "Beverly Hills",
-            text: "AshuEstate helped me find my dream home in just two weeks. Their AI recommendations were spot on!",
+            text: "CrestKeys helped me find my dream home in just two weeks. Their AI recommendations were spot on!",
             rating: 5
         },
         {
@@ -61,7 +61,7 @@ const AboutPage = () => {
         <div className="bg-gray-50 min-h-screen">
             {/* Hero Section */}
             <motion.section
-                className="relative bg-blue-900 text-white py-24 px-6"
+                className="relative bg-[#8b8b8b] text-white py-24 px-6"
                 initial="hidden"
                 animate="visible"
                 variants={fadeIn}
@@ -71,7 +71,7 @@ const AboutPage = () => {
                         className="text-5xl font-bold mb-6"
                         variants={fadeIn}
                     >
-                        About AshuEstate & Co.
+                        About CrestKeys
                     </motion.h1>
                     <motion.p
                         className="text-xl max-w-2xl mb-12"
@@ -138,7 +138,7 @@ const AboutPage = () => {
                             Our Values
                         </motion.h2>
                         <motion.div
-                            className="h-1 w-24 bg-blue-600 mx-auto mb-8"
+                            className="h-1 w-24 bg-[#8b8b8b] mx-auto mb-8"
                             variants={scaleUp}
                         ></motion.div>
                     </motion.div>
@@ -268,7 +268,7 @@ const AboutPage = () => {
                             className="text-4xl font-bold text-gray-800 mb-4"
                             variants={fadeIn}
                         >
-                            Why Choose AshuEstate
+                            Why Choose CrestKeys
                         </motion.h2>
                         <motion.div
                             className="h-1 w-24 bg-blue-600 mx-auto mb-8"
@@ -339,7 +339,7 @@ const AboutPage = () => {
                         >
                             <h3 className="text-2xl font-semibold mb-6">Ready to Find Your Dream Property?</h3>
                             <p className="mb-8">
-                                Join thousands of satisfied clients who found their perfect home with AshuEstate & Co.
+                                Join thousands of satisfied clients who found their perfect home with CrestKeys
                             </p>
                             <motion.div
                                 className="flex space-x-4"
@@ -366,7 +366,7 @@ const AboutPage = () => {
 
             {/* Contact CTA Section */}
             <motion.section
-                className="py-24 px-6 bg-blue-900 text-white text-center"
+                className="py-24 px-6 bg-[#8b8b8b] text-white text-center"
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true }}
