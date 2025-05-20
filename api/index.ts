@@ -52,6 +52,11 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
+app.get("/ping", (_req, res) => {
+  res.status(200).send("Pong 🟢");
+});
+
+
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
