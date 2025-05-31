@@ -5,13 +5,16 @@ import apiRequest from "../../lib/ApiRequest";
 import { AuthContext } from "../../context/AuthContext";
 import Slider from "../../components/slider/Slider";
 import Map from "../../components/map/Map";
-import { AreaChart, Bath, BedSingleIcon, Bus, Coins, Contact, CookingPot, Dog, MapPinCheck, Power, Save, School } from "lucide-react";
+import { AreaChart, Bath, BedSingleIcon, Bus, Coins, Contact, CookingPot, CreditCard, Dog, MapPinCheck, Power, Save, School } from "lucide-react";
+import CheckoutForm from "../../components/payment/CheckoutForm";
 
 const SinglePage = () => {
   const post = useLoaderData();
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [paymentCompleted, setPaymentCompleted] = useState(false)
+  const [showPaymentForm, setShowPaymentForm] = useState(false);  
   const { currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -41,13 +44,18 @@ const SinglePage = () => {
     }
   };
 
-  const handleSendMessage = () => {
+ const handlePayment = async () => {
     if (!currentUser) {
       navigate("/login");
       return;
     }
-    navigate(`/messages?user=${post.userId._id}`);
+
+    setShowPaymentForm(true);
   };
+
+  const handlePaymentSuccess = () => {
+    setPaymentCompleted(true);
+  }
 
   if (loading) {
     return (
@@ -101,16 +109,16 @@ const SinglePage = () => {
                     alt="Owner"
                     className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-md"
                   />
-               
+
                 </div>
                 <span className="font-medium text-gray-800">{post.userId?.username || "Property Owner"}</span>
                 <span className="text-xs text-gray-500 mb-2">Property Owner</span>
                 <button
-                  onClick={handleSendMessage}
+                  onClick={handlePayment}
                   className="text-sm bg-white text-[#B8860B] hover:bg-teal-50 border border-teal-300 rounded-full px-3 py-1 transition-colors flex items-center gap-1"
                 >
                   <Contact className="h-5 w-5" />
-                  Contact
+                  Pay!
                 </button>
               </div>
             </div>
@@ -130,11 +138,11 @@ const SinglePage = () => {
         <div className="max-w-lg mx-auto">
           <div className="flex justify-between gap-4 mb-8">
             <button
-              onClick={handleSendMessage}
+              onClick={handlePayment}
               className="flex-1 flex items-center justify-center gap-2 py-3 bg-[#B8860B] text-white rounded-lg shadow-md"
             >
-              <Contact className="h-5 w-5" />
-              Contact Owner
+              <CreditCard className="h-5 w-5" />
+              Make Payment!
             </button>
             <button
               onClick={handleSave}
@@ -145,6 +153,18 @@ const SinglePage = () => {
               {saved ? "Saved" : "Save Property"}
             </button>
           </div>
+          {showPaymentForm && (
+            <div className="p-4 bg-white rounded shadow max-w-md mx-auto mt-8">
+              {paymentCompleted ? (
+                <div className="text-green-600 font-semibold text-center">
+                  Payment Successful! Thank you.
+                </div>
+              ) : (
+                <CheckoutForm amount={post.price || 0} onPaymentSuccess={handlePaymentSuccess} />
+              )}
+            </div>
+          )}
+
           <div className="grid grid-cols-3 gap-4 mb-8">
             <div className="bg-white p-4 rounded-lg shadow-sm flex flex-col items-center">
               <div className="text-[#B8860B] mb-1">
@@ -224,18 +244,18 @@ const SinglePage = () => {
                 <h3 className="text-sm font-semibold text-[#151b1f]">School</h3>
                 <p className="text-sm text-[#36454F] text-center">
                   {post.postDetail.school
-                  
-                   +" km" || "N/A"}
+
+                    + " km" || "N/A"}
                 </p>
               </div>
               <div className="bg-yellow-50 p-4 rounded-lg flex flex-col items-center">
                 <div className="bg-gray-100 p-2 rounded-full mb-2">
-                 <Bus className="h-5 w-5 text-[#36454F]" />
+                  <Bus className="h-5 w-5 text-[#36454F]" />
                 </div>
                 <h3 className="text-sm font-semibold text-[#151b1f]">Bus Stop</h3>
                 <p className="text-sm text-[#36454F] text-center">
                   {post.postDetail?.bus
-                    +" km" || "N/A"}
+                    + " km" || "N/A"}
                 </p>
               </div>
               <div className="bg-yellow-50 p-4 rounded-lg flex flex-col items-center">
@@ -245,8 +265,8 @@ const SinglePage = () => {
                 <h3 className="text-sm font-semibold text-[#151b1f]">Restaurant</h3>
                 <p className="text-sm text-[#36454F] text-center">
                   {post.postDetail?.restaurant
-                    
-                   +" km" || "N/A"}
+
+                    + " km" || "N/A"}
                 </p>
               </div>
             </div>

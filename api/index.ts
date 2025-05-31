@@ -1,5 +1,7 @@
-import express from "express";
 import dotenv from "dotenv";
+dotenv.config();
+
+import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { connectDB } from "./db";
@@ -7,8 +9,11 @@ import authRoutes from "./routes/auth.route";
 import postRoutes from "./routes/post.route";
 import userRoutes from "./routes/user.route";
 import verifyRoutes from "./routes/test.route";
+import paymentroutes from "./routes/payment.route";
 
-dotenv.config();
+
+console.log("Stripe key:", process.env.STRIPE_SECRET_KEY);
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -62,6 +67,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/verify", verifyRoutes);
+app.use("/api/payment", paymentroutes);
 
 // Sample route
 app.get("/", (req, res) => {
