@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, FormEvent } from "react";
 import apiRequest from "../../lib/ApiRequest";
-import { CheckCircle2, Loader2Icon, Lock, Mail, User2 } from "lucide-react";
+import { CheckCircle2, Loader2Icon, Lock, Mail, User2, UserCog } from "lucide-react";
 
 const Register = () => {
   const [error, setError] = useState("");
@@ -17,12 +17,14 @@ const Register = () => {
     const username = formData.get("username") as string;
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
+    const accountType=formData.get("accountType") as String;
 
     try {
       await apiRequest.post("/auth/register", {
         username,
         email,
         password,
+        accountType,
       });
       navigate("/login");
     } catch (err: any) {
@@ -117,7 +119,7 @@ const Register = () => {
                   name="email"
                   type="email"
                   required
-                  className="w-full pl-10 px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200"
+                 className="w-full pl-10 px-4 py-3 bg-white border-gray-300 rounded-lg focus:ring-teal-500 focus:ring-2  transition-all duration-200"
                   placeholder="your@email.com"
                 />
               </div>
@@ -134,13 +136,26 @@ const Register = () => {
                   name="password"
                   type="password"
                   required
-                  className="w-full pl-10 px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200"
+                  className="w-full pl-10 px-4 py-3 bg-white rounded-lg focus:ring-teal-500 focus:border-teal-500 transition-all duration-200"
                   placeholder="Create a secure password"
                 />
               </div>
               <p className="text-xs text-gray-500 mt-1">Must be at least 8 characters</p>
             </div>
 
+            <div className="space-y-2">
+              <label htmlFor="accountType" className="block text-sm font-medium text-gray-700">Account Type</label>
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+                  <UserCog className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" />
+              </div>
+              <select className="w-full pl-2 px-4 py-3 border-none bg-white border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200" name="accountType">
+                <option value="owner">Owner</option>
+                <option value="buyer">Buyer</option>
+                <option value="agent">Agent</option>
+                <option value="buyer">Admin</option>
+              </select>
+
+            </div>
             {error && (
               <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded animate-pulse">
                 <p className="text-red-700 text-sm">{error}</p>

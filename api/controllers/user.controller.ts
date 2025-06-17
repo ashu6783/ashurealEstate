@@ -11,7 +11,7 @@ interface CustomRequest extends Request {
 
 export const getUsers = async (req: Request, res: Response): Promise<void> => {
   try {
-    const users = await User.find().select("-password");
+    const users = await User.find();
     res.status(200).json(users);
   } catch (err) {
     console.error(err);
@@ -22,7 +22,7 @@ export const getUsers = async (req: Request, res: Response): Promise<void> => {
 export const getUser = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
   try {
-    const user = await User.findById(id).select("-password");
+    const user = await User.findById(id);
     if (!user) {
       res.status(404).json({ message: "User not found" });
       return;
@@ -33,6 +33,7 @@ export const getUser = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ message: "Failed to get user!" });
   }
 };
+
 
 export const updateUser = async (req: CustomRequest, res: Response): Promise<void> => {
   const { id } = req.params;
@@ -59,6 +60,8 @@ export const updateUser = async (req: CustomRequest, res: Response): Promise<voi
     res.status(500).json({ message: "Failed to update user!" });
   }
 };
+
+
 
 export const deleteUser = async (req: CustomRequest, res: Response): Promise<void> => {
   const { id } = req.params;

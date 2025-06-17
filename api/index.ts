@@ -18,10 +18,8 @@ console.log("Stripe key:", process.env.STRIPE_SECRET_KEY);
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Trust the first proxy (needed when behind Render/Vercel proxy)
 app.set("trust proxy", 1);
 
-// Configure CORS with appropriate origins
 const allowedOrigins = [
   'https://ashureal-estate.vercel.app', 
   'http://localhost:5173'
@@ -31,7 +29,6 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: function(origin, callback) {
-      // Allow requests with no origin (like mobile apps, curl requests)
       if (!origin) return callback(null, true);
       
       if (allowedOrigins.indexOf(origin) !== -1) {
@@ -58,7 +55,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 app.get("/ping", (_req, res) => {
-  res.status(200).send("Pong 🟢");
+  res.status(200).send("Pong");
 });
 
 

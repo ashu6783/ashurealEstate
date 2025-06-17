@@ -1,8 +1,10 @@
 import axios from "axios";
 
 const apiRequest = axios.create({
-  baseURL: "https://ashurealestate.onrender.com/api",
-  withCredentials: true, // Ensures cookies are sent with requests
+  baseURL: process.env.NODE_ENV === 'production' 
+    ? "https://ashurealestate.onrender.com/api"
+    : "http://localhost:5000/api",
+  withCredentials: true,
 });
 
 // Optional: Log outgoing requests for debugging

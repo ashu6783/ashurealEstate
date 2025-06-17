@@ -4,7 +4,6 @@ import apiRequest from "../../lib/ApiRequest";
 import { AuthContext } from "../../context/AuthContext";
 import { Post } from "../../types";
 
-// Import icons
 import { Plus,Save, FileText } from "lucide-react";
 import ProfileCard from "../../components/ProfileCard";
 import PostList from "../../components/list/PostList";

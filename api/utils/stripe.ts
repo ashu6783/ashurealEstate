@@ -15,6 +15,4 @@ if (!stripeSecretKey) {
   throw new Error("STRIPE_SECRET_KEY environment variable is missing!");
 }
 
-export const stripe = new Stripe(stripeSecretKey, {
-  apiVersion: "2025-04-30.basil",
-});
+export const stripe = new Stripe(stripeSecretKey);

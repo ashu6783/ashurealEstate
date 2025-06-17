@@ -3,7 +3,6 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/user";
 
-// Helper to log errors cleanly
 const logError = (label: string, req: Request, err: unknown) => {
   console.error(`\n[${new Date().toISOString()}] ${label}`);
   console.error(`Path: ${req.path}`);
@@ -13,9 +12,22 @@ const logError = (label: string, req: Request, err: unknown) => {
   console.error("Stack Trace:", (err as Error).stack);
 };
 
+
 export const register = async (req: Request, res: Response): Promise<void> => {
-  const { username, email, password } = req.body;
+  const { username, email, password, accountType } = req.body;
+
   try {
+    if (!username || !email || !password || !accountType) {
+      res.status(400).json({ message: "All fields are required" });
+      return;
+    }
+
+    const allowedTypes = ["owner", "buyer", "agent", "admin"];
+    if (!allowedTypes.includes(accountType)) {
+      res.status(400).json({ message: "Invalid account type" });
+      return;
+    }
+
     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
     if (existingUser) {
       res.status(400).json({ message: "Username or email already exists" });
@@ -28,16 +40,18 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       username,
       email,
       password: hashedPassword,
+      accountType,
     });
 
     await newUser.save();
 
     res.status(201).json({ message: "User created successfully!" });
   } catch (err) {
-    logError("Register Error", req, err);
+    logError("Register Error", req, err); // custom logger
     res.status(500).json({ message: "Failed to create user!" });
   }
 };
+
 
 export const login = async (req: Request, res: Response): Promise<void> => {
   console.log(`[${new Date().toISOString()}] POST ${req.path} - Incoming body:`, req.body);
@@ -56,10 +70,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       res.status(401).json({ message: "Invalid credentials" });
       return;
     }
-
-    // Cookie expiration time in milliseconds (7 days)
     const maxAge = 1000 * 60 * 60 * 24 * 7;
-    
     const token = jwt.sign(
       { id: user._id.toString() },
       process.env.JWT_SECRET_KEY as string,
@@ -67,15 +78,13 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     );
 
     const { password: _, ...userInfo } = user.toObject();
-
-    // Important: Set cookie with proper parameters for persistence
     res
       .cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // Only send over HTTPS in production
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Important for cross-site usage
-        path: "/",  // Ensure cookie is available for all paths
-        maxAge: maxAge, // Cookie will expire after this time (in milliseconds)
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        path: "/",
+        maxAge: maxAge,
       })
       .status(200)
       .json(userInfo);
@@ -89,8 +98,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
 export const logout = (req: Request, res: Response): void => {
   console.log(`[${new Date().toISOString()}] POST ${req.path} - Logout requested`);
-
-  // Important: Must use the same cookie options when clearing
   res
     .clearCookie("token", {
       httpOnly: true,
@@ -102,17 +109,13 @@ export const logout = (req: Request, res: Response): void => {
     .json({ message: "Logout successful" });
 };
 
-// Verification endpoint that uses the existing verifyToken middleware
+
 export const verifySession = async (req: Request & { userId?: string }, res: Response): Promise<void> => {
   try {
-    // If we get here, the token has been verified by the middleware
-    // and req.userId has been set
     if (!req.userId) {
       res.status(401).json({ message: "User ID not found in token" });
       return;
     }
-    
-    // Optionally fetch user data to return to client
     const user = await User.findById(req.userId).select("-password");
     
     if (!user) {

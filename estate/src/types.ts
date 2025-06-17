@@ -1,8 +1,8 @@
-// types.ts or similar file
 export interface User {
   _id: string;
   username: string;
   email: string;
+   accountType:string;
   avatar?: string;
 }
 

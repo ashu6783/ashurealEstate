@@ -7,6 +7,11 @@ const userSchema = new Schema<IUser>({
   password: { type: String, required: true },
   avatar: { type: String },
   createdAt: { type: Date, default: Date.now },
+  accountType:{
+  type: String,
+  enum: ["owner","buyer","agent","admin"],
+  default:"buyer",
+}
 });
 
 export default model<IUser>("User", userSchema);

@@ -1,6 +1,6 @@
 import { createContext } from "react";
 
-// Central User type
+
 export interface User {
   id: string;
   _id: string;
@@ -8,6 +8,7 @@ export interface User {
   email: string;
   avatar: string;
   username: string;
+  accountType:string;
 }
 
 export interface AuthContextType {

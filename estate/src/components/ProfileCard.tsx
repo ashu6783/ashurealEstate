@@ -1,11 +1,12 @@
 import React, { memo } from "react";
 import { Link } from "react-router-dom";
-import { Mail, LogOut, Edit, User } from "lucide-react";
+import { Mail, LogOut, Edit, User, UserCog } from "lucide-react";
 
 interface ProfileCardProps {
   currentUser: {
     username: string;
     email: string;
+    accountType:string;
     avatar?: string;
   };
   postCount: number;
@@ -44,6 +45,11 @@ const ProfileCard: React.FC<ProfileCardProps> = memo(({
               <Mail size={14} />
               {currentUser.email}
             </p>
+            <p className="text-white flex items-center justify-center sm:justify-start gap-1 mt-1 text-sm lg:font-bold md:text-base" >
+              <UserCog size={14}/>
+              Account type : <span className="font-extrabold">{currentUser.accountType}</span>
+            </p>
+
             <div className="mt-4 flex gap-2 md:gap-3 justify-center sm:justify-start flex-wrap sm:flex-nowrap">
               <Link to="/profile/update">
                 <button className="bg-[#B8860B] text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg shadow-md flex items-center gap-1 md:gap-2 hover:scale-105 transition-transform active:scale-95 text-sm md:text-base">
@@ -87,6 +93,7 @@ const ProfileCard: React.FC<ProfileCardProps> = memo(({
   // Only re-render if any of these props have changed
   return (
     prevProps.currentUser.username === nextProps.currentUser.username &&
+    prevProps.currentUser.accountType===nextProps.currentUser.accountType&&
     prevProps.currentUser.email === nextProps.currentUser.email &&
     prevProps.currentUser.avatar === nextProps.currentUser.avatar &&
     prevProps.postCount === nextProps.postCount &&

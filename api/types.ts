@@ -7,6 +7,7 @@ export interface IUser {
   password: string;
   avatar?: string;
   createdAt: Date;
+  accountType:String;
 }
 
 export interface IPost {
