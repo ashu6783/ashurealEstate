@@ -1,11 +1,12 @@
 import axios from "axios";
 
 const apiRequest = axios.create({
-  baseURL: process.env.NODE_ENV === 'production' 
-    ? "https://ashurealestate.onrender.com/api"
-    : "http://localhost:5000/api",
+  baseURL: process.env.NODE_ENV === 'development'
+    ? "http://localhost:5000/api"
+    : "https://ashurealestate.onrender.com/api",
   withCredentials: true,
 });
+
 
 // Optional: Log outgoing requests for debugging
 apiRequest.interceptors.request.use(
