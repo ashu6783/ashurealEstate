@@ -3,7 +3,7 @@ import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import apiRequest from "../../lib/ApiRequest";
 
 interface CheckoutFormProps {
-  amount: number; // payment amount in your currency units (e.g. dollars)
+  amount: number; 
   onPaymentSuccess: () => void;
 }
 
@@ -26,7 +26,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ amount, onPaymentSuccess })
     }
 
     try {
-      // 1. Create PaymentIntent on backend
+  
       const response = await apiRequest.post("/payment/create-payment-intent", {
         amount,
         currency: "usd",
@@ -34,7 +34,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ amount, onPaymentSuccess })
 
       const clientSecret = response.data.clientSecret;
 
-      // 2. Confirm the card payment on frontend
       const cardElement = elements.getElement(CardElement);
 
       if (!cardElement) {

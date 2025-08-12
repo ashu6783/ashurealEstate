@@ -1,7 +1,6 @@
 import { LoaderFunctionArgs } from "react-router-dom";
 import apiRequest from "./ApiRequest";
 
-// Utility to extract status safely from error object
 const handleLoaderError = (error: any, fallbackMessage: string) => {
   const status = error?.response?.status;
   const message = error?.response?.data?.message || fallbackMessage;
@@ -11,7 +10,7 @@ const handleLoaderError = (error: any, fallbackMessage: string) => {
     status,
     error: error?.message,
     stack: error?.stack,
-  }); // Enhanced logging
+  }); 
 
   if (status === 401) {
     throw new Response("Unauthorized", { status: 401 });
@@ -45,7 +44,7 @@ export const listPageLoader = async ({ request }: LoaderFunctionArgs) => {
   try {
     const res = await apiRequest(`/posts?${query}`);
     console.log("listPageLoader response:", res.data);
-    return { postResponse: res.data }; // Return raw data
+    return { postResponse: res.data }; 
   } catch (error: any) {
     handleLoaderError(error, "Failed to fetch posts");
   }
@@ -56,7 +55,7 @@ export const profilePageLoader = async () => {
   try {
     const res = await apiRequest("/users/profilePosts");
     console.log("profilePageLoader response:", res.data);
-    return { postResponse: res.data }; // Return raw data
+    return { postResponse: res.data };
   } catch (error: any) {
     handleLoaderError(error, "Failed to fetch profile posts");
   }

@@ -25,9 +25,8 @@ export const getPosts = async (
     if (city) filters.city = { $regex: String(city), $options: "i" };
     if (type) filters.type = { $regex: String(type), $options: "i" };
     if (property) filters.property = { $regex: String(property), $options: "i" };
-    if (bedroom) filters.bedroom = { $gte: Number(bedroom) }; // Range-based filtering
-    if (bathroom) filters.bathroom = { $gte: Number(bathroom) }; // Range-based filtering
-    // Relaxed coordinate validation (non-empty strings)
+    if (bedroom) filters.bedroom = { $gte: Number(bedroom) };
+    if (bathroom) filters.bathroom = { $gte: Number(bathroom) }; 
     filters.latitude = { $exists: true, $ne: null };
     filters.longitude = { $exists: true, $ne: null };
     if (minPrice || maxPrice) {
@@ -57,27 +56,23 @@ export const getPost = async (
     const postId = req.params.id;
     console.log("Fetching post with ID:", postId);
 
-    // Validate the postId format
     if (!postId.match(/^[0-9a-fA-F]{24}$/)) {
       res.status(400).json({ message: "Invalid post ID format" });
       return;
     }
 
-    // Find the post and populate the userId field
     const post = await Post.findById(postId).populate("userId");
     if (!post) {
       res.status(404).json({ message: "Post not found" });
       return;
     }
 
-    // Manually fetch the associated PostDetail
+ 
     const postDetail = await PostDetail.findOne({ postId: post._id });
 
-
-    // Combine the post and postDetail into the response
     const postWithDetails = {
       ...post.toObject(),
-      postDetail: postDetail || null, // Include postDetail, or null if not found
+      postDetail: postDetail || null, 
     };
     res.status(200).json(postWithDetails);
   } catch (error: any) {
@@ -86,7 +81,7 @@ export const getPost = async (
   }
 };
 
-// Add a new post
+
 export const addPost = async (
   req: AuthenticatedRequest,
   res: Response,
@@ -101,7 +96,8 @@ export const addPost = async (
       return;
     }
 
-    // Validate userId format
+    
+ 
     if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
       res.status(400).json({ message: "Invalid user ID format" });
       return;
@@ -112,6 +108,12 @@ export const addPost = async (
     if (!user) {
       res.status(404).json({ message: "User not found" });
       return;
+    }
+
+    if(user.accountType!=="owner")
+    {
+       res.status(403).json({message:"Forbidden to create post!"});
+       return;
     }
 
     const { postData, postDetail } = req.body;
@@ -137,11 +139,9 @@ export const addPost = async (
       return;
     }
 
-    // Ensure latitude and longitude are strings
     postData.latitude = String(postData.latitude);
     postData.longitude = String(postData.longitude);
 
-    // Create new Post
     const newPost = new Post({
       ...postData,
       userId,
@@ -149,7 +149,6 @@ export const addPost = async (
 
     const savedPost = await newPost.save();
 
-    // Create new PostDetail
     const newPostDetail = new PostDetail({
       ...postDetail,
       postId: savedPost._id,
@@ -166,7 +165,7 @@ export const addPost = async (
   }
 };
 
-// Update an existing post
+
 export const updatePost = async (
   req: AuthenticatedRequest,
   res: Response,
@@ -182,7 +181,7 @@ export const updatePost = async (
       return;
     }
 
-    // Validate IDs
+
     if (!postId.match(/^[0-9a-fA-F]{24}$/) || !tokenUserId.match(/^[0-9a-fA-F]{24}$/)) {
       res.status(400).json({ message: "Invalid post ID or user ID format" });
       return;
@@ -194,7 +193,6 @@ export const updatePost = async (
       return;
     }
 
-    // Check if the user is authorized to update the post
     if (post.userId.toString() !== tokenUserId) {
       res.status(403).json({ message: "Not authorized to update this post" });
       return;
@@ -202,17 +200,13 @@ export const updatePost = async (
 
     const { postData, postDetail } = req.body;
   
-
-    // Update Post
     if (postData) {
-      // Ensure latitude and longitude are strings if provided
       if (postData.latitude) postData.latitude = String(postData.latitude);
       if (postData.longitude) postData.longitude = String(postData.longitude);
       Object.assign(post, postData);
       await post.save();
     }
 
-    // Update PostDetail if provided
     if (postDetail) {
       const existingPostDetail = await PostDetail.findOne({ postId: post._id });
       if (existingPostDetail) {
@@ -220,7 +214,6 @@ export const updatePost = async (
         await existingPostDetail.save();
   
       } else {
-        // If PostDetail doesn't exist, create a new one
         const newPostDetail = new PostDetail({
           ...postDetail,
           postId: post._id,
@@ -230,7 +223,6 @@ export const updatePost = async (
       }
     }
 
-    // Fetch the updated post and postDetail for the response
     const updatedPost = await Post.findById(postId).populate("userId");
     const updatedPostDetail = await PostDetail.findOne({ postId: postId });
     const postWithDetails = {
@@ -246,7 +238,6 @@ export const updatePost = async (
   }
 };
 
-// Delete a post
 export const deletePost = async (
   req: AuthenticatedRequest,
   res: Response,
@@ -255,14 +246,11 @@ export const deletePost = async (
   try {
     const postId = req.params.id;
     const tokenUserId = req.userId;
-
-
     if (!tokenUserId) {
       res.status(401).json({ message: "Unauthorized: User ID not found" });
       return;
     }
 
-    // Validate IDs
     if (!postId.match(/^[0-9a-fA-F]{24}$/) || !tokenUserId.match(/^[0-9a-fA-F]{24}$/)) {
       res.status(400).json({ message: "Invalid post ID or user ID format" });
       return;
@@ -274,24 +262,15 @@ export const deletePost = async (
       return;
     }
 
-    // Check if the user is authorized to delete the post
     if (post.userId.toString() !== tokenUserId) {
       res.status(403).json({ message: "Not authorized to delete this post" });
       return;
     }
 
-    // Delete the associated PostDetail
+ 
     await PostDetail.deleteOne({ postId: post._id });
-    console.log("Deleted associated post detail for post ID:", postId);
-
-    // Delete any associated SavedPost entries
     await SavedPost.deleteMany({ postId: post._id });
-    console.log("Deleted associated saved posts for post ID:", postId);
-
-    // Delete the Post
     await Post.deleteOne({ _id: postId });
-    console.log("Deleted post with ID:", postId);
-
     res.status(200).json({ message: "Post and associated data deleted successfully" });
   } catch (error: any) {
     console.error("Error in deletePost:", error.message, error.stack);

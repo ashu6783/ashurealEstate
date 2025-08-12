@@ -1,65 +1,61 @@
-import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { useState, useEffect, useCallback } from "react";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
-// Define the type for images
 interface SliderProps {
-  images: string[]; // Array of strings (URLs for the images)
+  images: string[];
 }
 
-function Slider({ images }: SliderProps) {
-  const [imageIndex, setImageIndex] = useState<number | null>(null);
+export default function Slider({ images }: SliderProps) {
+  const [modalIndex, setModalIndex] = useState<number | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // Handle keyboard navigation when modal is open
+  const isModalOpen = modalIndex !== null;
+
+  // Slide change handler
+ const changeSlide = useCallback(
+  (direction: "left" | "right") => {
+    const length = images.length;
+
+    if (isModalOpen) {
+      setModalIndex((prev: number | null) => {
+        const safePrev = prev ?? 0; // fallback to 0 if null
+        return direction === "left"
+          ? (safePrev - 1 + length) % length
+          : (safePrev + 1) % length;
+      });
+    } else {
+      setCurrentSlide((prev: number) =>
+        direction === "left"
+          ? (prev - 1 + length) % length
+          : (prev + 1) % length
+      );
+    }
+  },
+  [images.length, isModalOpen]
+);
+
   useEffect(() => {
+    if (!isModalOpen) return;
+
     const handleKeydown = (e: KeyboardEvent) => {
-      if (imageIndex === null) return;
-      
-      if (e.key === 'ArrowLeft') {
-        changeSlide('left');
-      } else if (e.key === 'ArrowRight') {
-        changeSlide('right');
-      } else if (e.key === 'Escape') {
-        setImageIndex(null);
-      }
+      if (e.key === "ArrowLeft") changeSlide("left");
+      if (e.key === "ArrowRight") changeSlide("right");
+      if (e.key === "Escape") setModalIndex(null);
     };
 
-    window.addEventListener('keydown', handleKeydown);
-    return () => window.removeEventListener('keydown', handleKeydown);
-  }, [imageIndex]);
+    window.addEventListener("keydown", handleKeydown);
+    return () => window.removeEventListener("keydown", handleKeydown);
+  }, [isModalOpen, changeSlide]);
 
-  // Prevent body scroll when modal is open
+
   useEffect(() => {
-    if (imageIndex !== null) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
+    document.body.style.overflow = isModalOpen ? "hidden" : "";
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
-  }, [imageIndex]);
+  }, [isModalOpen]);
 
-  const changeSlide = (direction: string) => {
-    if (imageIndex !== null) {
-      // For modal view
-      if (direction === "left") {
-        setImageIndex((prev) => (prev === 0 ? images.length - 1 : prev! - 1));
-      } else {
-        setImageIndex((prev) => (prev === images.length - 1 ? 0 : prev! + 1));
-      }
-    } else {
-      // For thumbnail view
-      if (direction === "left") {
-        setCurrentSlide((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-      } else {
-        setCurrentSlide((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-      }
-    }
-  };
-
-  // If there are no images
-  if (!images || images.length === 0) {
+  if (!images.length) {
     return (
       <div className="w-full h-[350px] bg-gray-200 rounded-lg flex items-center justify-center">
         <p className="text-gray-500">No images available</p>
@@ -69,160 +65,135 @@ function Slider({ images }: SliderProps) {
 
   return (
     <div className="relative w-full">
-      {/* Fullscreen modal */}
-      {imageIndex !== null && (
-        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
-          <button 
-            onClick={() => setImageIndex(null)}
-            className="absolute top-4 right-4 text-white p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-70 transition-all"
+      {/* Modal View */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50">
+          {/* Close */}
+          <button
+            onClick={() => setModalIndex(null)}
+            className="absolute top-4 right-4 text-white p-2 rounded-full bg-black/50 hover:bg-black/70 transition"
             aria-label="Close"
           >
             <X className="w-6 h-6" />
           </button>
-          
+
+          {/* Prev */}
           <button
             onClick={() => changeSlide("left")}
-            className="absolute left-4 text-white p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-70 transition-all"
-            aria-label="Previous image"
+            className="absolute left-4 text-white p-2 rounded-full bg-black/50 hover:bg-black/70 transition"
+            aria-label="Previous"
           >
             <ChevronLeft className="w-6 h-6" />
           </button>
-          
-          <div className="w-full h-full max-w-5xl max-h-full flex items-center justify-center p-4 md:p-8">
-            <img 
-              src={images[imageIndex]} 
-              alt={`Property image ${imageIndex + 1}`} 
-              className="max-w-full max-h-full object-contain"
+
+          {/* Image */}
+          <div className="max-w-5xl max-h-full flex items-center justify-center p-4">
+            <img
+              src={images[modalIndex!]}
+              alt={`Slide ${modalIndex! + 1}`}
+              className="max-w-full max-h-[90vh] object-contain"
             />
           </div>
-          
+
+          {/* Next */}
           <button
             onClick={() => changeSlide("right")}
-            className="absolute right-4 text-white p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-70 transition-all"
-            aria-label="Next image"
+            className="absolute right-4 text-white p-2 rounded-full bg-black/50 hover:bg-black/70 transition"
+            aria-label="Next"
           >
             <ChevronRight className="w-6 h-6" />
           </button>
-          
+
+          {/* Counter */}
           <div className="absolute bottom-4 left-0 right-0 flex justify-center">
-            <div className="bg-black bg-opacity-50 px-4 py-2 rounded-full text-white text-sm">
-              {imageIndex + 1} / {images.length}
-            </div>
+            <span className="bg-black/50 px-4 py-2 rounded-full text-white text-sm">
+              {modalIndex! + 1} / {images.length}
+            </span>
           </div>
         </div>
       )}
-      
-      {/* Main slider - different layouts based on number of images */}
-      <div className="h-[350px] md:h-[450px] rounded-lg overflow-hidden">
-        {images.length === 1 ? (
-          // Single image layout - full width
-          <div 
-            className="w-full h-full cursor-pointer relative group"
-            onClick={() => setImageIndex(0)}
+
+      {/* Main Slider */}
+      <div className="h-[350px] md:h-[450px] rounded-lg overflow-hidden relative">
+        {images.length > 1 && (
+          <button
+            onClick={() => changeSlide("left")}
+            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow hover:bg-gray-100 transition"
           >
-            <img 
-              src={images[0]} 
-              alt="Property image" 
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity"></div>
-            <div className="absolute bottom-4 right-4 bg-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </div>
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+        )}
+
+        <div
+          className="w-full h-full cursor-pointer"
+          onClick={() => setModalIndex(currentSlide)}
+        >
+          <img
+            src={images[currentSlide]}
+            alt={`Slide ${currentSlide + 1}`}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute bottom-4 left-4 bg-black/60 text-white px-3 py-1 rounded-full text-sm">
+            {currentSlide + 1} / {images.length}
           </div>
-        ) : (
-          // Multiple images layout
-          <div className="flex h-full">
-            {/* Left arrow for thumbnail view */}
-            {images.length > 1 && (
-              <button
-                onClick={() => changeSlide("left")}
-                className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition-colors"
-                aria-label="Previous image"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-            )}
-            
-            {/* Main large image */}
-            <div 
-              className="flex-grow h-full cursor-pointer relative"
-              onClick={() => setImageIndex(currentSlide)}
-            >
-              <img 
-                src={images[currentSlide]} 
-                alt={`Property main image`} 
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute bottom-4 left-4 bg-black bg-opacity-60 text-white px-3 py-1 rounded-full text-sm">
-                {currentSlide + 1} / {images.length}
-              </div>
-            </div>
-            
-            {/* Thumbnails - only show on medium screens and up */}
-            {images.length > 1 && (
-              <div className="hidden md:flex flex-col w-1/4 ml-2 gap-2 h-full overflow-y-auto py-0.5">
-                {images.map((image, index) => (
-                  <div 
-                    key={index}
-                    className={`h-[calc(100%/3-0.5rem)] cursor-pointer relative rounded-lg overflow-hidden ${
-                      index === currentSlide ? 'ring-2 ring-teal-500' : ''
-                    }`}
-                    onClick={() => {
-                      setCurrentSlide(index);
-                    }}
-                  >
-                    <img 
-                      src={image} 
-                      alt={`Property thumbnail ${index + 1}`} 
-                      className="w-full h-full object-cover"
-                    />
-                    {index === currentSlide && (
-                      <div className="absolute inset-0 bg-teal-500 bg-opacity-20"></div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-            
-            {/* Right arrow for thumbnail view */}
-            {images.length > 1 && (
-              <button
-                onClick={() => changeSlide("right")}
-                className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition-colors"
-                aria-label="Next image"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            )}
-          </div>
+        </div>
+
+        {images.length > 1 && (
+          <button
+            onClick={() => changeSlide("right")}
+            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow hover:bg-gray-100 transition"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
         )}
       </div>
-      
-      {/* Mobile thumbnails - horizontal scrolling */}
+
+      {/* Thumbnails */}
       {images.length > 1 && (
-        <div className="md:hidden flex gap-2 mt-2 overflow-x-auto pb-2">
-          {images.map((image, index) => (
-            <div 
-              key={index}
-              className={`flex-shrink-0 w-16 h-16 cursor-pointer rounded-md overflow-hidden ${
-                index === currentSlide ? 'ring-2 ring-teal-500' : 'opacity-70'
-              }`}
-              onClick={() => setCurrentSlide(index)}
-            >
-              <img 
-                src={image} 
-                alt={`Property thumbnail ${index + 1}`} 
-                className="w-full h-full object-cover"
-              />
-            </div>
-          ))}
-        </div>
+        <>
+          {/* Desktop */}
+          <div className="hidden md:flex gap-2 mt-2">
+            {images.map((img, idx) => (
+              <div
+                key={idx}
+                onClick={() => setCurrentSlide(idx)}
+                className={`cursor-pointer rounded-md overflow-hidden border-2 ${
+                  idx === currentSlide
+                    ? "border-teal-500"
+                    : "border-transparent hover:border-gray-300"
+                }`}
+              >
+                <img
+                  src={img}
+                  alt={`Thumbnail ${idx + 1}`}
+                  className="w-20 h-20 object-cover"
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Mobile */}
+          <div className="flex md:hidden gap-2 mt-2 overflow-x-auto pb-2">
+            {images.map((img, idx) => (
+              <div
+                key={idx}
+                onClick={() => setCurrentSlide(idx)}
+                className={`flex-shrink-0 w-16 h-16 cursor-pointer rounded-md overflow-hidden border-2 ${
+                  idx === currentSlide
+                    ? "border-teal-500"
+                    : "border-transparent opacity-70"
+                }`}
+              >
+                <img
+                  src={img}
+                  alt={`Thumbnail ${idx + 1}`}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );
 }
-
-export default Slider;

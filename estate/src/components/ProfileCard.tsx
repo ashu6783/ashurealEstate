@@ -2,6 +2,7 @@ import React, { memo } from "react";
 import { Link } from "react-router-dom";
 import { Mail, LogOut, Edit, User, UserCog } from "lucide-react";
 
+
 interface ProfileCardProps {
   currentUser: {
     username: string;
@@ -14,8 +15,6 @@ interface ProfileCardProps {
   handleLogout: () => Promise<void>;
 }
 
-// Memoization to prevent unnecessary re-renders
-// Using React.memo to prevent unnecessary re-renders
 const ProfileCard: React.FC<ProfileCardProps> = memo(({
   currentUser,
   postCount,

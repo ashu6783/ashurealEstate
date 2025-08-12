@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, useMap, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { LatLngExpression } from "leaflet";
 
-// Fix Leaflet marker icons
+
 import L from "leaflet";
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -33,7 +33,7 @@ function MapBounds({ items }: { items: Item[] }) {
   useEffect(() => {
     if (!items || items.length === 0) {
       // No items, set default view
-      map.setView([37.7749, -122.4194], 10); // Default to San Francisco
+      map.setView([37.7749, -122.4194], 10); 
       return;
     }
 
@@ -49,11 +49,11 @@ function MapBounds({ items }: { items: Item[] }) {
         if (bounds.isValid()) {
           map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
         } else {
-          map.setView([37.7749, -122.4194], 10); // Fallback
+          map.setView([37.7749, -122.4194], 10);
         }
       } catch (error) {
         console.error("Error setting map bounds:", error);
-        map.setView([37.7749, -122.4194], 10); // Fallback
+        map.setView([37.7749, -122.4194], 10);
       }
     }
   }, [items, map]);
@@ -125,7 +125,7 @@ function CustomPin({ item }: { item: Item }) {
 
 function Map({ items = [] }: MapProps) {
   const [isClient, setIsClient] = useState(false);
-  const defaultCenter: LatLngExpression = [37.7749, -122.4194]; // Default center (San Francisco)
+  const defaultCenter: LatLngExpression = [37.7749, -122.4194];
 
   // Ensure client-side rendering
   useEffect(() => {

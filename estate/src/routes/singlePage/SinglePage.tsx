@@ -154,7 +154,7 @@ const SinglePage = () => {
             </button>
           </div>
           {showPaymentForm && (
-            <div className="p-4 bg-white rounded shadow max-w-md mx-auto mt-8">
+            <div className="p-4 space-y-2 bg-white rounded shadow max-w-md mx-auto mt-8">
               {paymentCompleted ? (
                 <div className="text-green-600 font-semibold text-center">
                   Payment Successful! Thank you.

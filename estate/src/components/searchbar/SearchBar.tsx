@@ -17,7 +17,6 @@ function SearchBar() {
   const [expanded, setExpanded] = useState(false);
   const navigate = useNavigate();
 
-  // Close suggestions when clicking outside
   useEffect(() => {
     const handleClickOutside = () => {
       setQuery(prev => ({ ...prev, showSuggestions: false }));
