@@ -21,14 +21,16 @@ type CardProps = {
 function Card({ item, className = "" }: CardProps) {
   const [isLiked, setIsLiked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const formatPrice = (price: number) => {
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
-  const imageSource = item.images && item.images.length > 0 
-    ? item.images[0] 
-    : item.img || "/api/placeholder/400/320";
+  const imageSource =
+    item.images && item.images.length > 0
+      ? item.images[0]
+      : item.img || "/api/placeholder/400/320";
 
   return (
     <motion.div
@@ -39,21 +41,28 @@ function Card({ item, className = "" }: CardProps) {
       whileHover={{ y: -5 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
-      style={{ 
-        boxShadow: "0 4px 20px rgba(0,0,0,0.08)"
+      style={{
+        boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
       }}
     >
       {/* Image Container */}
       <Link to={`/${item.id}`} className="block relative">
-        <div className="relative w-full h-60 overflow-hidden">
+        <div className="relative w-full h-60 overflow-hidden bg-gray-100 flex items-center justify-center">
+          {!imageLoaded && (
+            <div className="absolute inset-0 flex items-center justify-center bg-white/60">
+              <div className="w-8 h-8 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          )}
           <motion.img
             src={imageSource}
             alt={item.title || "Property"}
             className="w-full h-full object-cover"
             animate={{ scale: isHovered ? 1.05 : 1 }}
             transition={{ duration: 0.5 }}
+            onLoad={() => setImageLoaded(true)}
             onError={(e) => {
               e.currentTarget.src = "/api/placeholder/400/320";
+              setImageLoaded(true);
             }}
           />
 
@@ -84,7 +93,7 @@ function Card({ item, className = "" }: CardProps) {
       {/* Text Content */}
       <div className="p-5 flex flex-col gap-4 flex-grow">
         <div>
-          <motion.h2 
+          <motion.h2
             className="text-lg font-bold text-gray-800 line-clamp-1"
             whileHover={{ color: "#3b82f6" }}
           >
@@ -97,27 +106,28 @@ function Card({ item, className = "" }: CardProps) {
         </div>
 
         <div className="flex flex-wrap gap-3 text-sm">
-          <motion.div 
+          <motion.div
             className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg"
             whileHover={{ backgroundColor: "#f0f9ff" }}
           >
             <Bed size={16} className="text-[#B8860B]" />
-            <span>{item.bedroom} {item.bedroom === 1 ? "bed" : "beds"}</span>
+            <span>
+              {item.bedroom} {item.bedroom === 1 ? "bed" : "beds"}
+            </span>
           </motion.div>
-          <motion.div 
+          <motion.div
             className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg"
             whileHover={{ backgroundColor: "#f0f9ff" }}
           >
             <Bath size={16} className="text-[#B8860B]" />
-            <span>{item.bathroom} {item.bathroom === 1 ? "bath" : "baths"}</span>
+            <span>
+              {item.bathroom} {item.bathroom === 1 ? "bath" : "baths"}
+            </span>
           </motion.div>
         </div>
 
         <div className="flex justify-between items-center pt-3 mt-auto border-t border-gray-100">
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Link
               to={`/${item.id}`}
               className="text-sm bg-[#B8860B] text-white font-medium px-4 py-2 rounded-lg inline-block"
@@ -126,22 +136,26 @@ function Card({ item, className = "" }: CardProps) {
             </Link>
           </motion.div>
           <div className="flex gap-2">
-            <motion.button 
-              className={`p-2 rounded-full ${isLiked ? 'bg-red-50 text-red-500' : 'bg-gray-50 text-gray-500'}`}
+            <motion.button
+              className={`p-2 rounded-full ${
+                isLiked
+                  ? "bg-red-50 text-red-500"
+                  : "bg-gray-50 text-gray-500"
+              }`}
               onClick={() => setIsLiked(!isLiked)}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
             >
               <Heart size={18} fill={isLiked ? "currentColor" : "none"} />
             </motion.button>
-            <motion.button 
+            <motion.button
               className="p-2 rounded-full bg-gray-50 text-gray-500"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
             >
               <MessageCircle size={18} />
             </motion.button>
-            <motion.button 
+            <motion.button
               className="p-2 rounded-full bg-gray-50 text-gray-500"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}

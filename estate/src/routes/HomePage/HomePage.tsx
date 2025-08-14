@@ -1,28 +1,33 @@
-import { useContext, lazy, Suspense } from 'react';
+import { useContext, lazy, Suspense, useEffect } from 'react';
 import { AuthContext } from '../../context/AuthContext';
-
-// Import the new component files
 import FeaturedProperties from '../../components/card/featuredProperties';
 import CTASection from '../../components/card/CTA';
-
-// Lazy load components that aren't needed for initial render
 const SearchBar = lazy(() => import('../../components/searchbar/SearchBar'));
 
-// Preload main background image
-const preloadMainImage = () => {
-  const link = document.createElement('link');
-  link.rel = 'preload';
-  link.as = 'image';
-  link.href = '/bgg.webp';
-  document.head.appendChild(link);
-};
+
+const preloadImages = (urls:string[]) =>{
+  urls.forEach(url => {
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'image';
+    link.href=url;
+    document.head.appendChild(link);
+  });
+}
 
 function HomePage() {
-  // Preload the image as soon as component mounts
-  preloadMainImage();
+
   const { currentUser } = useContext(AuthContext);
 
-  // Move this out of the render function to prevent re-creation on each render
+  useEffect(()=>{
+    preloadImages([
+        '/bgg.webp',
+      '/property-1.jpg',
+      '/property-2.jpg',
+      '/property-3.jpg'
+    ])
+  })
+
   const featuredProperties = [
     {
       id: 1,
@@ -54,11 +59,9 @@ function HomePage() {
     <div className="min-h-screen bg-gradient-to-br from-[#171b2c] to-[#4d4b1e]">
       <div className="container mx-auto px-4 py-12">
         <div className="flex flex-col md:flex-row gap-8 lg:gap-16">
-          {/* Left Content Section - Critical LCP path */}
           <div className="flex-1 md:flex-[3]">
             <div className="flex flex-col gap-8 md:pr-8">
               <div className="space-y-4">
-                {/* This is your LCP element - prioritize it */}
                 <h1 className="text-5xl lg:text-7xl font-bold text-white leading-tight">
                   Find{" "}
                   <span className="bg-gradient-to-r from-[#d4b838] via-[#FFD700] to-[#e0aa22] bg-clip-text text-transparent font-extrabold">
@@ -67,20 +70,18 @@ function HomePage() {
                   & Get Your Dream Place
                 </h1>
                 <p className="text-lg md:text-xl text-gray-300 max-w-2xl">
-                  Welcome to AshuEstate and Co., where your dream home becomes a reality.
+                  Welcome to CrestKeys, where your dream home becomes a reality.
                   We specialize in connecting you with the perfect property,
                   tailored to your unique needs and lifestyle.
                 </p>
               </div>
 
-              {/* Lazy load SearchBar component */}
               <div className="py-6">
                 <Suspense fallback={<div className="h-14 bg-gray-100 animate-pulse rounded-lg"></div>}>
                   <SearchBar />
                 </Suspense>
               </div>
 
-              {/* Stats Section with Static Rendering */}
               <div className="hidden sm:grid grid-cols-3 gap-6 mt-8 py-8 border-t border-gray-200">
                 <div className="text-center p-4 bg-white bg-opacity-50 hover:bg-white rounded-xl transition-colors duration-300">
                   <h2 className="text-4xl lg:text-5xl font-bold text-[#B8860B]">16+</h2>
@@ -96,7 +97,6 @@ function HomePage() {
                 </div>
               </div>
 
-              {/* User Welcome Message if Logged In */}
               {currentUser && (
                 <div className="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-100">
                   <p className="text-lg text-[#292009]">
@@ -107,7 +107,6 @@ function HomePage() {
             </div>
           </div>
 
-          {/* Right Image Gallery Section - Optimize with explicit width/height */}
           <div className="hidden md:block flex-[2]">
             <div className="grid grid-cols-1 gap-6 h-full">
               <div className="overflow-hidden rounded-2xl shadow-xl">
