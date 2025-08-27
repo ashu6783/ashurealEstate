@@ -4,7 +4,7 @@ import Card from "../../components/card/card";
 import { motion } from "framer-motion";
 
 const ListPage = () => {
-  const { data: posts = [], isLoading, error } = useGetPostsQuery();
+  const { data: posts = [], isLoading, error } = useGetPostsQuery({});
 
   if (isLoading) {
     return (
