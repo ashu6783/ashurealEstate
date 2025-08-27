@@ -5,7 +5,7 @@ import { verifyToken } from "../middleware/verifyToken";
 const router = express.Router();
 
 router.get("/", verifyToken, getUsers);
-router.get("/profilePosts", verifyToken, profilePosts);  // Moved before :id
+router.get("/profilePosts", verifyToken, profilePosts);
 router.get("/:id", verifyToken, getUser);
 router.put("/:id", verifyToken, updateUser);
 router.delete("/:id", verifyToken, deleteUser);

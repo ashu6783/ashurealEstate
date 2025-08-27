@@ -2,8 +2,19 @@ export interface User {
   _id: string;
   username: string;
   email: string;
-   accountType:string;
+  accountType: string;
   avatar?: string;
+}
+
+export interface PostDetail {
+  desc: string;
+  utilities?: "included" | "excluded" | "shared";
+  pet?: "allowed" | "not_allowed" | "case_by_case";
+  income?: "no" | "yes";
+  size?: number;
+  school?: number;
+  bus?: number;
+  restaurant?: number;
 }
 
 export interface Post {
@@ -19,19 +30,7 @@ export interface Post {
   longitude: string;
   type: "buy" | "rent";
   property: "apartment" | "house" | "condo" | "land";
-  userId: {
-    username: string;
-    avatar?: string;
-  };
-  postDetail?: {
-    desc: string;
-    utilities?: string;
-    pet?: string;
-    income?: string;
-    size?: number;
-    school?: number;
-    bus?: number;
-    restaurant?: number;
-  };
+  userId: Pick<User, "username" | "avatar">;
+  postDetail?: PostDetail;
   isSaved?: boolean;
 }

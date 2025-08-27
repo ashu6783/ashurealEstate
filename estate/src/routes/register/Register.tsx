@@ -1,198 +1,242 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useState, FormEvent } from "react";
-import apiRequest from "../../lib/ApiRequest";
-import { CheckCircle2, Loader2Icon, Lock, Mail, User2, UserCog } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useContext, useState } from "react";
+import { AuthContext, User } from "../../context/AuthContext";
+import { LockKeyhole, User as UserIcon, Mail, Shield } from "lucide-react";
+import { useLoginMutation, useRegisterMutation } from "../../state/api";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import toast from "react-hot-toast";
 
-const Register = () => {
-  const [error, setError] = useState("");
-  const [isLoading, setLoading] = useState(false);
+const loginSchema = z.object({
+  username: z.string().min(3, "Username must be at least 3 chars"),
+  password: z.string().min(1, "Password is required"),
+});
+
+const registerSchema = z.object({
+  username: z.string().min(3, "Username must be at least 3 chars"),
+  email: z.string().email("Invalid email"), // <-- also fixed here
+  password: z.string().min(6, "Password must be at least 6 chars"),
+  accountType: z
+    .string()
+    .min(1, "Account type is required")
+    .refine((val) => ["buyer", "owner", "agent"].includes(val), {
+      message: "Invalid account type",
+    }),
+});
+
+
+type LoginFormInputs = z.infer<typeof loginSchema>;
+type RegisterFormInputs = z.infer<typeof registerSchema>;
+
+const Auth: React.FC = () => {
+  const { updateUser, currentUser, loading } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [login, { isLoading: isLoggingIn }] = useLoginMutation();
+  const [registerUser, { isLoading: isRegistering }] = useRegisterMutation();
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+  const [activeForm, setActiveForm] = useState<"login" | "register">("login");
 
-    const formData = new FormData(e.target as HTMLFormElement);
-    const username = formData.get("username") as string;
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    const accountType=formData.get("accountType") as String;
+  const {
+    register,
+    handleSubmit,
+  } = useForm<LoginFormInputs>({
+    resolver: zodResolver(loginSchema),
+  });
 
+  const {
+    register: registerField,
+    handleSubmit: handleRegisterSubmit,
+  } = useForm<RegisterFormInputs>({
+    resolver: zodResolver(registerSchema),
+  });
+
+  if (currentUser && !loading) navigate("/");
+
+  const onLoginSubmit: SubmitHandler<LoginFormInputs> = async ({ username, password }) => {
     try {
-      await apiRequest.post("/auth/register", {
-        username,
-        email,
-        password,
-        accountType,
-      });
-      navigate("/login");
-    } catch (err: any) {
-      console.log(err);
-      setError(err.response?.data?.message || "An error occurred");
-    } finally {
-      setLoading(false);
+      const userResponse = await login({ username, password }).unwrap();
+
+      const user: User = {
+        id: userResponse._id,
+        _id: userResponse._id,
+        name: userResponse.username,
+        username: userResponse.username,
+        email: userResponse.email,
+        avatar: userResponse.avatar || "",
+        accountType: userResponse.accountType || "buyer",
+      };
+
+      updateUser(user);
+      toast.success("Login successful!");
+      navigate("/");
+    } catch (err: unknown) {
+      const error = err as { data?: { message?: string } };
+      toast.error(error?.data?.message || "Login failed");
     }
   };
 
-  return (
-    <div className="flex min-h-screen bg-gradient-to-br from-teal-50 to-blue-50">
-      {/* Left side - Image */}
-      <div className="hidden lg:flex lg:w-1/2 items-center justify-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#bcbeca] to-[#36351c] z-10"></div>
-        <div className="relative z-20 p-12 max-w-lg text-white">
-          <h2 className="text-4xl font-bold mb-6">Welcome to Crestkeys</h2>
-          <p className="text-xl mb-8 text-white/90">
-            Sign up to explore premium properties, expert insights, and personalized real estate solutions.
-          </p>
+  const onRegisterSubmit: SubmitHandler<RegisterFormInputs> = async ({
+    username,
+    email,
+    password,
+    accountType,
+  }) => {
+    try {
+      await registerUser({ username, email, password, accountType }).unwrap();
+      toast.success("Registration successful! Please log in.");
+      setActiveForm("login");
+    } catch (err: unknown) {
+      const error = err as { data?: { message?: string } };
+      toast.error(error?.data?.message || "Registration failed");
+    }
+  };
 
-          <div className="space-y-6">
-            <div className="flex items-start">
-              <div className="flex-shrink-0 mt-1">
-                <CheckCircle2 className="h-6 w-6 text-teal-300" />
-              </div>
-              <div className="ml-3">
-                <h3 className="text-lg font-medium">Verified Listings</h3>
-                <p className="text-white/80">Browse handpicked, verified properties across top locations.</p>
-              </div>
-            </div>
-
-            <div className="flex items-start">
-              <div className="flex-shrink-0 mt-1">
-                <CheckCircle2 className="h-6 w-6 text-teal-300" />
-              </div>
-              <div className="ml-3">
-                <h3 className="text-lg font-medium">Smart Property Matching</h3>
-                <p className="text-white/80">Get matched with properties tailored to your budget, needs, and lifestyle.</p>
-              </div>
-
-            </div>
-
-            <div className="flex items-start">
-              <div className="flex-shrink-0 mt-1">
-                <CheckCircle2 className="h-6 w-6 text-teal-300" />
-              </div>
-              <div className="ml-3">
-                <h3 className="text-lg font-medium">Exclusive Deals</h3>
-                <p className="text-white/80">Unlock early access to investment opportunities and offers.</p>
-              </div>
-            </div>
-          </div>
-        </div>
+  if (loading)
+    return (
+      <div className="flex h-screen items-center justify-center bg-slate-900 text-white">
+        Authenticating...
       </div>
+    );
 
-
-      {/* Right side - Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12">
+  return (
+    <div className="flex min-h-screen bg-gradient-to-br from-slate-900 to-slate-800">
+      <div className="flex-1 flex items-center justify-center px-6 sm:px-12">
         <div className="w-full max-w-md">
-          <div className="text-center mb-10">
-            <h1 className="text-4xl font-bold text-gray-800 mb-2">Create Account</h1>
-            <p className="text-gray-600">Join our community today</p>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700">Username</label>
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
-                  <User2 className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" />
-                </div>
-                <input
-                  id="username"
-                  name="username"
-                  type="text"
-                  required
-                  className="w-full pl-10 px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200"
-                  placeholder="Choose a username"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
-                 <Mail className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" />
-                </div>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                 className="w-full pl-10 px-4 py-3 bg-white border-gray-300 rounded-lg focus:ring-teal-500 focus:ring-2  transition-all duration-200"
-                  placeholder="your@email.com"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-              <div className="relative group">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
-                  <Lock className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" />
-                </div>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  className="w-full pl-10 px-4 py-3 bg-white rounded-lg focus:ring-teal-500 focus:border-teal-500 transition-all duration-200"
-                  placeholder="Create a secure password"
-                />
-              </div>
-              <p className="text-xs text-gray-500 mt-1">Must be at least 8 characters</p>
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="accountType" className="block text-sm font-medium text-gray-700">Account Type</label>
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
-                  <UserCog className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" />
-              </div>
-              <select className="w-full pl-2 px-4 py-3 border-none bg-white border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200" name="accountType">
-                <option value="owner">Owner</option>
-                <option value="buyer">Buyer</option>
-                <option value="agent">Agent</option>
-                <option value="buyer">Admin</option>
-              </select>
-
-            </div>
-            {error && (
-              <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded animate-pulse">
-                <p className="text-red-700 text-sm">{error}</p>
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full py-3 px-4 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white font-medium rounded-lg shadow-md transition-all duration-200 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+          {activeForm === "login" ? (
+            <form
+              onSubmit={handleSubmit(onLoginSubmit)}
+              className="bg-white/10 backdrop-blur-md p-8 rounded-2xl shadow-xl space-y-6"
             >
-              {isLoading ? (
-                <span className="flex items-center justify-center">
-                 <Loader2Icon className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
-                  Creating Account...
-                </span>
-              ) : (
-                "Create Account"
-              )}
-            </button>
+              <div className="text-center">
+                <h1 className="text-3xl font-bold text-white">Welcome Back</h1>
+                <p className="text-slate-300 text-sm mt-1">Sign in to continue</p>
+              </div>
 
+              <div className="space-y-4">
+                <div className="relative">
+                  <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-5 w-5" />
+                  <input
+                    type="text"
+                    placeholder="Username"
+                    className="w-full pl-10 pr-4 py-3 rounded-lg border bg-slate-800/50 text-white placeholder-slate-400 focus:ring-2 focus:ring-cyan-400 focus:outline-none transition"
+                    {...register("username")}
+                  />
+                </div>
 
+                <div className="relative">
+                  <LockKeyhole className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-5 w-5" />
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    className="w-full pl-10 pr-4 py-3 rounded-lg border bg-slate-800/50 text-white placeholder-slate-400 focus:ring-2 focus:ring-cyan-400 focus:outline-none transition"
+                    {...register("password")}
+                  />
+                </div>
+              </div>
 
-          </form>
+              <button
+                type="submit"
+                disabled={isLoggingIn}
+                className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white py-3 px-4 rounded-lg hover:from-cyan-600 hover:to-blue-600 focus:ring-4 focus:ring-cyan-300 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoggingIn ? "Logging in..." : "Sign In"}
+              </button>
 
-          <div className="mt-8 text-center">
-            <p className="text-gray-600">
-              Already have an account?{" "}
-              <Link to="/login" className="text-teal-600 hover:text-teal-700 font-medium transition-colors duration-200">
-                Sign in
-              </Link>
-            </p>
-          </div>
+              <div className="text-center">
+                <p className="text-slate-300 text-sm">
+                  Don’t have an account?{" "}
+                  <button
+                    type="button"
+                    className="text-cyan-400 underline hover:text-cyan-300"
+                    onClick={() => setActiveForm("register")}
+                  >
+                    Sign up
+                  </button>
+                </p>
+              </div>
+            </form>
+          ) : (
+            <form
+              onSubmit={handleRegisterSubmit(onRegisterSubmit)}
+              className="bg-white/10 backdrop-blur-md p-8 rounded-2xl shadow-xl space-y-6"
+            >
+              <div className="text-center">
+                <h1 className="text-3xl font-bold text-white">Create Account</h1>
+                <p className="text-slate-300 text-sm mt-1">Sign up to get started</p>
+              </div>
+
+              <div className="space-y-4">
+                <div className="relative">
+                  <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-5 w-5" />
+                  <input
+                    type="text"
+                    placeholder="Username"
+                    className="w-full pl-10 pr-4 py-3 rounded-lg border bg-slate-800/50 text-white placeholder-slate-400 focus:ring-2 focus:ring-cyan-400 focus:outline-none transition"
+                    {...registerField("username")}
+                  />
+                </div>
+
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-5 w-5" />
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    className="w-full pl-10 pr-4 py-3 rounded-lg border bg-slate-800/50 text-white placeholder-slate-400 focus:ring-2 focus:ring-cyan-400 focus:outline-none transition"
+                    {...registerField("email")}
+                  />
+                </div>
+
+                <div className="relative">
+                  <LockKeyhole className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-5 w-5" />
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    className="w-full pl-10 pr-4 py-3 rounded-lg border bg-slate-800/50 text-white placeholder-slate-400 focus:ring-2 focus:ring-cyan-400 focus:outline-none transition"
+                    {...registerField("password")}
+                  />
+                </div>
+
+                <div className="relative">
+                  <Shield className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-5 w-5" />
+                  <select
+                    className="w-full pl-10 pr-4 py-3 rounded-lg border bg-slate-800/50 text-white focus:ring-2 focus:ring-cyan-400 focus:outline-none transition"
+                    {...registerField("accountType")}
+                  >
+                    <option value="">Select Account Type</option>
+                    <option value="buyer">Buyer</option>
+                    <option value="owner">Owner</option>
+                    <option value="agent">Agent</option>
+                  </select>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isRegistering}
+                className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white py-3 px-4 rounded-lg hover:from-cyan-600 hover:to-blue-600 focus:ring-4 focus:ring-cyan-300 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isRegistering ? "Registering..." : "Sign Up"}
+              </button>
+
+              <div className="text-center">
+                <p className="text-slate-300 text-sm">
+                  Already have an account?{" "}
+                  <button
+                    type="button"
+                    className="text-cyan-400 underline hover:text-cyan-300"
+                    onClick={() => setActiveForm("login")}
+                  >
+                    Sign in
+                  </button>
+                </p>
+              </div>
+            </form>
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-export default Register;
+export default Auth;

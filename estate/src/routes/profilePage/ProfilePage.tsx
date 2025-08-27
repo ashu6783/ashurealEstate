@@ -1,23 +1,13 @@
-import { useContext, Suspense, useState, useMemo, useCallback } from "react";
-import { Await, Link, useLoaderData, useNavigate } from "react-router-dom";
+import { useContext, useState, useCallback } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import apiRequest from "../../lib/ApiRequest";
 import { AuthContext } from "../../context/AuthContext";
-import { Post } from "../../types";
-
-import { Plus, Save, FileText } from "lucide-react";
+import { Plus, Save, FileText, LogOut, Inbox } from "lucide-react";
 import ProfileCard from "../../components/ProfileCard";
 import PostList from "../../components/list/PostList";
+import { useGetProfilePostsQuery } from "../../state/api";
+import { motion } from "framer-motion";
 
-interface PostResponse {
-  userPosts: Post[];
-  savedPosts: Post[];
-}
-
-interface LoaderData {
-  postResponse: Promise<PostResponse>;
-}
-
-// Simple spinner loader
 const SimpleLoader = () => (
   <div className="flex justify-center items-center py-10">
     <div className="w-10 h-10 border-4 border-[#B8860B] border-t-transparent rounded-full animate-spin"></div>
@@ -25,11 +15,10 @@ const SimpleLoader = () => (
 );
 
 function ProfilePage() {
-  const data = useLoaderData() as LoaderData;
   const { updateUser, currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("myPosts");
-  const [cachedData, setCachedData] = useState<PostResponse | null>(null);
+  const [activeTab, setActiveTab] = useState<"myPosts" | "savedPosts">("myPosts");
+  const { data: postResponse, isLoading, isError } = useGetProfilePostsQuery();
 
   const handleLogout = useCallback(async () => {
     try {
@@ -43,138 +32,110 @@ function ProfilePage() {
 
   if (!currentUser) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800">
         <SimpleLoader />
       </div>
     );
   }
 
-  const DelayedAwait = ({ promise }: { promise: Promise<PostResponse> }) => {
-    const fetchAndCacheData = useCallback(async () => {
-      try {
-        if (!cachedData) {
-          const delayedPromise = await new Promise((resolve) =>
-            setTimeout(() => resolve(promise), 1000)
-          );
-          const result = (await delayedPromise) as PostResponse;
-          setCachedData(result);
-          return result;
-        }
-        return cachedData;
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        throw error;
-      }
-    }, [promise]);
-
-    const memoizedPromise = useMemo(() => {
-      return cachedData ? Promise.resolve(cachedData) : fetchAndCacheData();
-    }, [fetchAndCacheData]); // removed cachedData from deps
-
-    const renderTabContent = useCallback((postResponse: PostResponse) => {
-      return (
-        <>
-          <ProfileCard
-            currentUser={currentUser}
-            postCount={postResponse.userPosts.length}
-            savedCount={postResponse.savedPosts.length}
-            handleLogout={handleLogout}
-          />
-
-          <div className="w-full bg-black/20 shadow-xl rounded-xl md:rounded-2xl p-4 md:p-8 mt-4 md:mt-6">
-            <div className="flex mb-6 border-b border-gray-700 overflow-x-auto">
-              <button
-                onClick={() => setActiveTab("myPosts")}
-                className={`py-2 md:py-3 px-4 md:px-6 flex items-center gap-2 font-medium transition-all text-sm md:text-base ${
-                  activeTab === "myPosts"
-                    ? "border-b-2 border-[#B8860B] text-white"
-                    : "text-gray-400 hover:text-white"
-                }`}
-              >
-                <FileText
-                  size={18}
-                  className={activeTab === "myPosts" ? "text-[#B8860B]" : ""}
-                />
-                <span>My Posts</span>
-              </button>
-              <button
-                onClick={() => setActiveTab("savedPosts")}
-                className={`py-2 md:py-3 px-4 md:px-6 flex items-center gap-2 font-medium transition-all text-sm md:text-base ${
-                  activeTab === "savedPosts"
-                    ? "border-b-2 border-[#B8860B] text-white"
-                    : "text-gray-400 hover:text-white"
-                }`}
-              >
-                <Save
-                  size={18}
-                  className={activeTab === "savedPosts" ? "text-[#B8860B]" : ""}
-                />
-                <span>Saved Posts</span>
-              </button>
-            </div>
-
-            {activeTab === "myPosts" && (
-              <div>
-                <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mb-4 md:mb-6">
-                  <h2 className="text-xl md:text-2xl font-bold text-white">
-                    My Posts
-                  </h2>
-                  <Link to="/add">
-                    <button className="w-full sm:w-auto bg-[#B8860B] text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg shadow-md flex items-center justify-center gap-1 md:gap-2 hover:scale-105 transition-transform active:scale-95 text-sm md:text-base">
-                      <Plus size={16} />
-                      <span>Create Post</span>
-                    </button>
-                  </Link>
-                </div>
-                <PostList
-                  posts={postResponse.userPosts}
-                  emptyMessage="You haven't created any posts yet."
-                  isMyPosts={true}
-                  skipDelay={true}
-                />
-              </div>
-            )}
-
-            {activeTab === "savedPosts" && (
-              <div>
-                <h2 className="text-xl md:text-2xl font-bold text-white mb-4 md:mb-6">
-                  Saved Posts
-                </h2>
-                <PostList
-                  posts={postResponse.savedPosts}
-                  emptyMessage="You haven't saved any posts yet."
-                  skipDelay={true}
-                />
-              </div>
-            )}
-          </div>
-        </>
-      );
-    }, []);
-
+  if (isLoading) return <SimpleLoader />;
+  if (isError || !postResponse)
     return (
-      <Suspense fallback={<SimpleLoader />}>
-        <Await
-          resolve={memoizedPromise}
-          errorElement={
-            <div className="bg-red-100 text-red-600 p-3 md:p-4 rounded-lg text-center text-sm md:text-base">
-              Error loading data!
-            </div>
-          }
-        >
-          {(data) => {
-            const postResponse = data as PostResponse;
-            return renderTabContent(postResponse);
-          }}
-        </Await>
-      </Suspense>
+      <div className="bg-red-100 text-red-500 p-3 md:p-4 rounded-lg text-center text-sm md:text-base">
+        Error loading data!
+      </div>
     );
-  };
 
   return (
-    <div className="w-full min-h-full flex justify-center p-2 sm:p-4 md:p-6">
-      <div className="w-full max-w-5xl flex flex-col gap-4 md:gap-6">
-        <DelayedAwait promise={data.postResponse} />
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white px-3 sm:px-6 md:px-10 py-6">
+      {/* Profile Section */}
+      <div className="mb-6">
+        <ProfileCard
+          currentUser={currentUser}
+          postCount={postResponse.userPosts.length}
+          savedCount={postResponse.savedPosts.length}
+          handleLogout={handleLogout}
+        />
+      </div>
+
+      {/* Tabs + Posts */}
+      <div className="w-full backdrop-blur-lg bg-white/5 shadow-2xl rounded-2xl p-5 md:p-8 border border-white/10">
+        {/* Tabs */}
+        <div className="flex mb-6 border-b border-gray-700 overflow-x-auto relative">
+          {["myPosts", "savedPosts"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab as "myPosts" | "savedPosts")}
+              className={`relative py-2 md:py-3 px-4 md:px-6 flex items-center gap-2 font-medium text-sm md:text-base transition-all`}
+            >
+              {tab === "myPosts" ? (
+                <FileText size={18} className={activeTab === tab ? "text-[#FFD700]" : "text-gray-400"} />
+              ) : (
+                <Save size={18} className={activeTab === tab ? "text-[#FFD700]" : "text-gray-400"} />
+              )}
+              <span className={activeTab === tab ? "text-white" : "text-gray-400 hover:text-white"}>
+                {tab === "myPosts" ? "My Posts" : "Saved Posts"}
+              </span>
+
+              {activeTab === tab && (
+                <motion.div
+                  layoutId="underline"
+                  className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#FFD700]"
+                />
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* Posts Section */}
+        {activeTab === "myPosts" && (
+          <motion.div key="myPosts" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mb-4 md:mb-6">
+              <h2 className="text-xl md:text-2xl font-bold">My Posts</h2>
+              <Link to="/add">
+                <button className="w-full sm:w-auto bg-[#FFD700] text-black px-3 md:px-4 py-1.5 md:py-2 rounded-full shadow-lg flex items-center justify-center gap-1 md:gap-2 hover:scale-105 transition-transform active:scale-95 text-sm md:text-base">
+                  <Plus size={16} />
+                  <span>Create Post</span>
+                </button>
+              </Link>
+            </div>
+            <PostList
+              posts={postResponse.userPosts}
+              emptyMessage={
+                <div className="flex flex-col items-center justify-center py-10 text-gray-400">
+                  <Inbox size={40} className="mb-3" />
+                  <p>You haven't created any posts yet.</p>
+                </div>
+              }
+            />
+          </motion.div>
+        )}
+
+        {activeTab === "savedPosts" && (
+          <motion.div key="savedPosts" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">Saved Posts</h2>
+            <PostList
+              posts={postResponse.savedPosts}
+              emptyMessage={
+                <div className="flex flex-col items-center justify-center py-10 text-gray-400">
+                  <Inbox size={40} className="mb-3" />
+                  <p>You haven't saved any posts yet.</p>
+                </div>
+              }
+            />
+          </motion.div>
+        )}
+      </div>
+
+      {/* Logout Button Floating Bottom Right */}
+      <div className="fixed bottom-6 right-6">
+        <button
+          onClick={handleLogout}
+          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-full flex items-center gap-2 shadow-lg hover:shadow-xl transition-all"
+        >
+          <LogOut size={18} />
+          Logout
+        </button>
       </div>
     </div>
   );

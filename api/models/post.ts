@@ -41,11 +41,11 @@ const postSchema = new Schema({
     default: "apartment",
   },
   latitude: {
-    type: String,
+    type: Number,
     required: true,
   },
   longitude: {
-    type: String,
+    type: Number,
     required: true,
   },
   images: {

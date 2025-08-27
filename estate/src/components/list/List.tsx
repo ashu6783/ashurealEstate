@@ -1,18 +1,9 @@
 import Card from "../card/card";
+import { IPost } from "../../state/api";
 
-interface Post {
-  _id: string;
-  title: string;
-  images: string[];
-  address: string;
-  price: number;
-  bedroom: number;
-  bathroom: number;
-  // Add more properties if your `item` has them
-}
 
 interface ListProps {
-  posts: Post[];
+  posts: IPost[];
 }
 
 function List({ posts }: ListProps) {

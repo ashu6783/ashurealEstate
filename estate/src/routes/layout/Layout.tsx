@@ -3,7 +3,6 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import Navbar from '../../components/navbar/NavBar';
 
-// Common layout component used by both standard and authenticated routes
 function BaseLayout() {
   return (
     <div className="flex flex-col min-h-screen w-full">
@@ -17,12 +16,10 @@ function BaseLayout() {
   );
 }
 
-// Public layout - accessible to all users
 function Layout() {
   return <BaseLayout />;
 }
 
-// Protected layout - only accessible to authenticated users
 function RequireAuth() {
   const { currentUser } = useContext(AuthContext);
   

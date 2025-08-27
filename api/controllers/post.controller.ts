@@ -20,7 +20,6 @@ export const getPosts = async (
     const { city, type, property, bedroom, bathroom, minPrice, maxPrice } = req.query;
     console.log("getPosts query params:", req.query);
 
-    // Build filters
     const filters: any = {};
     if (city) filters.city = { $regex: String(city), $options: "i" };
     if (type) filters.type = { $regex: String(type), $options: "i" };
@@ -45,8 +44,6 @@ export const getPosts = async (
 };
 
 
-
-// Get a single post by ID
 export const getPost = async (
   req: Request,
   res: Response,
@@ -95,9 +92,6 @@ export const addPost = async (
       res.status(401).json({ message: "Unauthorized: User ID not found" });
       return;
     }
-
-    
- 
     if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
       res.status(400).json({ message: "Invalid user ID format" });
       return;

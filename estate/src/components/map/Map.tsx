@@ -1,16 +1,6 @@
-import { useEffect, useState } from "react";
-import { MapContainer, TileLayer, useMap, Marker, Popup } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import { LatLngExpression } from "leaflet";
-
-
-import L from "leaflet";
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-});
+import { useEffect, useRef, useState } from "react";
+import mapboxgl from "mapbox-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
 
 interface Item {
   id: string;
@@ -26,140 +16,82 @@ interface MapProps {
   items: Item[];
 }
 
-// Component to adjust map bounds
-function MapBounds({ items }: { items: Item[] }) {
-  const map = useMap();
+mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN; // put token in .env
+
+function PropertyMap({ items = [] }: MapProps) {
+  const mapContainer = useRef<HTMLDivElement | null>(null);
+  const mapRef = useRef<mapboxgl.Map | null>(null);
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
 
   useEffect(() => {
-    if (!items || items.length === 0) {
-      // No items, set default view
-      map.setView([37.7749, -122.4194], 10); 
-      return;
+    if (!mapContainer.current) return;
+    if (!mapRef.current) {
+      mapRef.current = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: "mapbox://styles/ashu0306/cmet0ybhx002001plh48x8fvg",
+        center: [items[0]?.longitude || -122.4194, items[0]?.latitude || 37.7749],
+        zoom: 10,
+      });
     }
 
-    if (items.length === 1) {
-      // Single item, center on it
-      map.setView([items[0].latitude, items[0].longitude], 13);
-    } else {
-      // Multiple items, fit bounds
-      try {
-        const bounds = L.latLngBounds(
-          items.map((item) => [item.latitude, item.longitude])
-        );
-        if (bounds.isValid()) {
-          map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
-        } else {
-          map.setView([37.7749, -122.4194], 10);
-        }
-      } catch (error) {
-        console.error("Error setting map bounds:", error);
-        map.setView([37.7749, -122.4194], 10);
-      }
+    const map = mapRef.current;
+
+    document.querySelectorAll(".custom-marker").forEach((el) => el.remove());
+
+    items.forEach((item) => {
+      const el = document.createElement("div");
+      el.className =
+        "custom-marker w-6 h-6 bg-[#B8860B] rounded-full border-2 border-white cursor-pointer";
+      el.onclick = () => setSelectedItem(item);
+
+      new mapboxgl.Marker(el)
+        .setLngLat([item.longitude, item.latitude])
+        .addTo(map);
+    });
+    if (items.length > 1) {
+      const bounds = new mapboxgl.LngLatBounds();
+      items.forEach((item) =>
+        bounds.extend([item.longitude, item.latitude])
+      );
+      map.fitBounds(bounds, { padding: 50 });
+    } else if (items.length === 1) {
+      map.setCenter([items[0].longitude, items[0].latitude]);
+      map.setZoom(13);
     }
-  }, [items, map]);
-
-  return null;
-}
-
-// Custom Pin component
-function CustomPin({ item }: { item: Item }) {
-  const formattedPrice = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(item.price);
+  }, [items]);
 
   return (
-    <Marker position={[item.latitude, item.longitude]}>
-      <Popup>
-        <div className="pin-popup" style={{ width: "200px" }}>
-          {item.img && (
-            <img
-              src={item.img}
-              alt={item.title}
-              style={{
-                width: "100%",
-                height: "120px",
-                objectFit: "cover",
-                borderRadius: "4px",
-              }}
-              onError={(e) => {
-                (e.target as HTMLImageElement).src =
-                  "https://via.placeholder.com/200x120?text=No+Image";
-              }}
-            />
-          )}
-          <h3
-            style={{
-              margin: "8px 0 4px",
-              fontSize: "14px",
-              fontWeight: "bold",
-            }}
+    <div className="w-full h-full relative" style={{ minHeight: "500px" }}>
+      <div ref={mapContainer} style={{ width: "100%", height: "100%" }} />
+
+      {selectedItem && (
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 bg-white shadow-lg rounded-lg p-3 w-56">
+          <button
+            className="absolute top-1 right-2 text-gray-500"
+            onClick={() => setSelectedItem(null)}
           >
-            {item.title}
-          </h3>
-          <p
-            style={{
-              margin: "0 0 4px",
-              color: "#2563eb",
-              fontWeight: "bold",
-              fontSize: "16px",
-            }}
-          >
-            {formattedPrice}
+            ✕
+          </button>
+          <img
+            src={selectedItem.img}
+            alt={selectedItem.title}
+            className="w-full h-24 object-cover rounded"
+            onError={(e) =>
+              ((e.target as HTMLImageElement).src =
+                "https://via.placeholder.com/200x120?text=No+Image")
+            }
+          />
+          <h3 className="font-bold text-sm mt-2">{selectedItem.title}</h3>
+          <p className="text-blue-600 font-semibold">
+            ${new Intl.NumberFormat().format(Math.floor(selectedItem.price))}
           </p>
-          <div
-            style={{
-              display: "flex",
-              fontSize: "12px",
-              color: "#4b5563",
-            }}
-          >
-            <span style={{ marginRight: "8px" }}>{item.bedroom} bed</span>
-          </div>
+          <span className="text-gray-600 text-xs">
+            {selectedItem.bedroom} bed
+          </span>
         </div>
-      </Popup>
-    </Marker>
+      )}
+    </div>
   );
 }
 
-function Map({ items = [] }: MapProps) {
-  const [isClient, setIsClient] = useState(false);
-  const defaultCenter: LatLngExpression = [37.7749, -122.4194];
-
-  // Ensure client-side rendering
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  if (!isClient) {
-    return (
-      <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-        <p className="text-gray-500">Loading map...</p>
-      </div>
-    );
-  }
-
-  console.log("Map received items:", items);
-
-  return (
-    <MapContainer
-      center={defaultCenter}
-      zoom={10}
-      scrollWheelZoom={true}
-      className="w-full h-full"
-      style={{ height: "100%", minHeight: "500px" }}
-    >
-      <TileLayer
-        attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      <MapBounds items={items} />
-      {items.map((item) => (
-        <CustomPin item={item} key={item.id} />
-      ))}
-    </MapContainer>
-  );
-}
-
-export default Map;
+export default PropertyMap;

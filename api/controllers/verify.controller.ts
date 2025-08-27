@@ -27,7 +27,6 @@ export const shouldBeLoggedIn = async (req: CustomRequest, res: Response): Promi
   }
 };
 
-// Middleware: Require admin
 export const shouldBeAdmin = async (req: CustomRequest, res: Response): Promise<void> => {
   const token = req.cookies?.token;
 

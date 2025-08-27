@@ -88,8 +88,6 @@ const ProfileCard: React.FC<ProfileCardProps> = memo(({
     </div>
   );
 }, (prevProps, nextProps) => {
-  // Custom comparison function for memo
-  // Only re-render if any of these props have changed
   return (
     prevProps.currentUser.username === nextProps.currentUser.username &&
     prevProps.currentUser.accountType===nextProps.currentUser.accountType&&
