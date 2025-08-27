@@ -1,9 +1,3 @@
-/**
- * Note: Use position fixed according to your needs
- * Desktop navbar is better positioned at the bottom
- * Mobile navbar is better positioned at bottom right.
- **/
-
 import { cn } from "../../lib/utils";
 import { LayoutDashboard } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -73,7 +67,7 @@ const FloatingDockMobile = ({
                   key={item.title}
                   className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 dark:bg-neutral-900"
                 >
-                  <div className="h-6 w-6  text-white">{item.icon}</div>
+                  <div className="h-6 w-6  dark:text-white text-black">{item.icon}</div>
                 </Link>
               </motion.div>
             ))}
@@ -82,7 +76,7 @@ const FloatingDockMobile = ({
       </AnimatePresence>
       <button
         onClick={() => setOpen(!open)}
-        className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 dark:bg-neutral-800"
+        className="flex h-10 w-10 items-center justify-center rounded-full dark:bg-gray-50 bg-neutral-800"
       >
         <LayoutDashboard className="h-5 w-5 text-neutral-500 dark:text-neutral-400" />
       </button>
@@ -103,7 +97,7 @@ const FloatingDockDesktop = ({
       onMouseMove={(e) => mouseX.set(e.pageX)}
       onMouseLeave={() => mouseX.set(Infinity)}
       className={cn(
-        "mx-auto hidden h-16 items-end gap-4 rounded-2xl bg-gray-50 px-4 pb-3 md:flex dark:bg-neutral-900",
+        "mx-auto hidden h-16 items-end gap-4 rounded-2xl dark:bg-gray-50 px-4 pb-3 md:flex bg-neutral-900",
         className,
       )}
     >
@@ -190,7 +184,7 @@ function IconContainer({
         </AnimatePresence>
         <motion.div
           style={{ width: widthIcon, height: heightIcon }}
-          className="flex items-center justify-center text-white"
+          className="flex items-center justify-center dark:text-white text-black"
         >
           {icon}
         </motion.div>

@@ -1,6 +1,6 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 // import globalReducer from "../estate/src/state/api"; 
-import { api } from "../estate/src/state/api";
+import { api } from "./src/state/api";
 import {
   persistStore,
   persistReducer,

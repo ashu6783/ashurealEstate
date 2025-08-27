@@ -1,6 +1,6 @@
 import { useGetPostsQuery, IPost } from "../../state/api"; // adjust path as needed
 import { Loader } from "lucide-react";
-import Card from "../../components/card/card";
+import Card from "../card/card";
 import { motion } from "framer-motion";
 
 const ListPage = () => {
