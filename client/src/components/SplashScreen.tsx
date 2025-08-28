@@ -53,7 +53,7 @@ const SplashScreen = () => {
               <img
                 src="/landing.svg"
                 alt="Landing"
-                className="w-64 h-64 mb-8 glow-effect"
+                className="w-64 h-64 mb-8 glow-effect dark:text-black text-white"
               />
             </div>
           </div>
