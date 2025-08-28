@@ -32,15 +32,23 @@ CrestKeys is a comprehensive real estate platform that connects property buyers,
   <table>
     <tr>
       <td width="50%">
-        <img src="https://github.com/user-attachments/assets/40231b16-b074-47de-8a73-d33a3d365a09" alt="Image 1" width="100%">
+       <img height="1547" alt="image" src="https://github.com/user-attachments/assets/74685908-aa2b-4bdb-a651-532fb146c68f" width="100%"  />
       </td>
       <td width="50%">
-        <img src="https://github.com/user-attachments/assets/399761f8-3251-4771-b33a-5dd11bdf1262" alt="Image 2" width="100%">
+        <img width="2801" height="1547" alt="image" src="https://github.com/user-attachments/assets/3ebd49bc-c779-43cd-b56d-c721cb98dbdb" width="100%" />
       </td>
     </tr>
     <tr>
       <td width="50%">
-        <img src="https://github.com/user-attachments/assets/08908959-d215-461b-ac26-19a5889b0256" alt="Image 3" width="100%">
+        <img src="https://github.com/user-attachments/assets/40231b16-b074-47de-8a73-d33a3d365a09" alt="Image 1" width="100%">
+      </td>
+      <td width="50%">
+          <img width="2853" height="1546" alt="image" src="https://github.com/user-attachments/assets/a9a92d42-0780-4e5d-a731-468bf4300ebd width="100%"" />
+      </td>
+    </tr>
+    <tr>
+      <td width="50%">
+       <img width="2875" height="1541" alt="image" src="https://github.com/user-attachments/assets/b08c32cf-dd9c-4bea-a1a1-6563576684c6 width="100%"" />
       </td>
       <td width="50%">
         <img src="https://github.com/user-attachments/assets/f9b507fa-7088-465d-bc4f-e914c247c512" alt="Image 4" width="100%">
