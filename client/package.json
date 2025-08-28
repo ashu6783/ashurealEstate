@@ -45,7 +45,7 @@
     "@types/bcrypt": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/leaflet": "^1.9.17",
-    "@types/react": "^19.1.10",
+    "@types/react": "^19.1.12",
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react": "^4.3.4",
     "eslint": "^9.21.0",

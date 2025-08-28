@@ -14,23 +14,29 @@ interface Item {
 
 interface MapProps {
   items: Item[];
+  onLoad?: () => void; 
 }
 
-mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN; // put token in .env
+mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
-function PropertyMap({ items = [] }: MapProps) {
+function PropertyMap({ items = [], onLoad }: MapProps) {
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
 
   useEffect(() => {
     if (!mapContainer.current) return;
+
     if (!mapRef.current) {
       mapRef.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: "mapbox://styles/ashu0306/cmet0ybhx002001plh48x8fvg",
         center: [items[0]?.longitude || -122.4194, items[0]?.latitude || 37.7749],
         zoom: 10,
+      });
+
+      mapRef.current.on("load", () => {
+        if (onLoad) onLoad();
       });
     }
 
@@ -44,21 +50,18 @@ function PropertyMap({ items = [] }: MapProps) {
         "custom-marker w-6 h-6 bg-[#B8860B] rounded-full border-2 border-white cursor-pointer";
       el.onclick = () => setSelectedItem(item);
 
-      new mapboxgl.Marker(el)
-        .setLngLat([item.longitude, item.latitude])
-        .addTo(map);
+      new mapboxgl.Marker(el).setLngLat([item.longitude, item.latitude]).addTo(map);
     });
+    
     if (items.length > 1) {
       const bounds = new mapboxgl.LngLatBounds();
-      items.forEach((item) =>
-        bounds.extend([item.longitude, item.latitude])
-      );
+      items.forEach((item) => bounds.extend([item.longitude, item.latitude]));
       map.fitBounds(bounds, { padding: 50 });
     } else if (items.length === 1) {
       map.setCenter([items[0].longitude, items[0].latitude]);
       map.setZoom(13);
     }
-  }, [items]);
+  }, [items, onLoad]);
 
   return (
     <div className="w-full h-full relative" style={{ minHeight: "500px" }}>
@@ -85,9 +88,7 @@ function PropertyMap({ items = [] }: MapProps) {
           <p className="text-blue-600 font-semibold">
             ${new Intl.NumberFormat().format(Math.floor(selectedItem.price))}
           </p>
-          <span className="text-gray-600 text-xs">
-            {selectedItem.bedroom} bed
-          </span>
+          <span className="text-gray-600 text-xs">{selectedItem.bedroom} bed</span>
         </div>
       )}
     </div>

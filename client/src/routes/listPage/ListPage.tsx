@@ -1,6 +1,6 @@
 import { useSearchParams } from "react-router-dom";
 import { useState, useEffect, useMemo } from "react";
-import { Map as MapIcon, Loader, X } from "lucide-react";
+import { Map as MapIcon, Loader, X, } from "lucide-react";
 import Filter from "../../components/filter/Filter";
 import Card from "../../components/card/card";
 import Map from "../../components/map/Map";
@@ -20,6 +20,7 @@ interface MapItem {
 function ListPage() {
   const [searchParams] = useSearchParams();
   const [filters, setFilters] = useState<Record<string, string | number>>({});
+  const [mapLoading, setMapLoading] = useState(true);
 
   const { data: posts = [], isLoading: isPostsLoading, error } = useGetPostsQuery(filters);
 
@@ -32,7 +33,6 @@ function ListPage() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Disable body scroll when mobile map is open
   useEffect(() => {
     document.body.style.overflow = showMobileMap ? "hidden" : "auto";
   }, [showMobileMap]);
@@ -103,16 +103,29 @@ function ListPage() {
     );
 
   /** Map View */
-  const renderMap = () =>
-    mapItems.length > 0 ? (
-      <Map items={mapItems} />
-    ) : (
-      <div className="flex flex-col items-center justify-center h-full bg-gray-100">
-        <MapIcon size={40} className="text-gray-400 mb-4" />
-        <p className="text-xl font-medium text-gray-700 mb-2">No valid map data</p>
-        <p className="text-gray-500">No properties with valid coordinates found.</p>
-      </div>
-    );
+const renderMap = () => (
+  <div className="relative h-full w-full p-4">
+    {/* Box Container */}
+    <div className="relative w-full h-full rounded-2xl shadow-lg border border-gray-200 overflow-hidden bg-white">
+      {mapLoading && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/70 backdrop-blur-sm">
+          <Loader size={40} className="animate-spin text-blue-500" />
+          <p className="ml-3 text-gray-700 font-medium">Loading map...</p>
+        </div>
+      )}
+
+      {mapItems.length > 0 ? (
+        <Map items={mapItems} onLoad={() => setMapLoading(false)} />
+      ) : (
+        <div className="flex flex-col items-center justify-center h-full bg-gray-50">
+          <MapIcon size={40} className="text-gray-400 mb-4" />
+          <p className="text-xl font-medium text-gray-700 mb-2">No valid map data</p>
+          <p className="text-gray-500">No properties with valid coordinates found.</p>
+        </div>
+      )}
+    </div>
+  </div>
+);
 
   return (
     <main className="flex flex-col h-screen bg-gradient-to-br from-[#171b2c] to-[#4d4b1e]">
@@ -144,11 +157,12 @@ function ListPage() {
           </header>
 
           {/* Grid/List */}
-          <div className="flex-1 overflow-y-auto px-4 md:px-8 pb-8">{renderGrid()}</div>
+          <div className="flex-1 overflow-y-auto  hidden- px-4 md:px-8 pb-8 scrollbar-none">{renderGrid()}</div>
         </div>
 
         {/* Right Panel (Desktop Map) */}
-        {!isMobile && <div className="h-full w-2/5">{renderMap()}</div>}
+        {!isMobile && <div className="h-full w-2/5">{renderMap()}
+        </div>}
       </section>
 
       {/* Mobile Map Fullscreen */}
