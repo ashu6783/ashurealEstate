@@ -92,10 +92,6 @@ function HomePage() {
           <CTASection />
         </div>
       </div>
-
-      <footer className="mt-16 py-8 bg-gray-900 text-white text-center">
-        <p className="text-sm">&copy; {new Date().getFullYear()} Built with ❤️ by Ashu.</p>
-      </footer>
     </div>
   );
 }
